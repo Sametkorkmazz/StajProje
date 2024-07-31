@@ -27,11 +27,24 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import FormGroup from '@mui/material/FormGroup'
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import Box from "@mui/material/Box";
+import { backdropClasses } from "@mui/material";
+import { styled } from '@mui/material/styles';
+import { blue } from '@mui/material/colors';
 function AnswerSurveyPopup(props) {
 
+    const ColoredButton = styled(Button)(({ theme }) => ({
+        color: theme.palette.getContrastText("#9C27B0"),
+        backgroundColor: "#A182FA",
+        '&:hover': {
+            backgroundColor: "#6342CB",
+        },
+    }));
     const [focusedSurveyIndex, set_focusedSurveyIndex] = useState(0);
     var questionAmount = props.survey.length > 0 ? props.survey[focusedSurveyIndex].questions.map((item) => false) : []
-
+    var sortedSurveys = props.survey.map(item => item);
+    sortedSurveys.sort((a, b) => new Date(a.expireDate) - new Date(b.expireDate))
     const [answeredQuestionArray, set_answeredQuestionArray] = useState(questionAmount)
     const [cevaplayanSicil, set_cevaplayanSicil] = useState("");
     const [focusSurvey, set_focusSurvey] = useState(false);
@@ -84,9 +97,9 @@ function AnswerSurveyPopup(props) {
 
             </Dialog>
             <div className="create-survey d-flex flex-column p-4 rounded">
-                <div className="row justify-content-start" style={{ position: "relative", bottom: "10px", right: "10px" }}>
-                    <div className="col">
-                        <Button onClick={() => props.setAnswerSurvey(false)} className="justify-content-start">
+                <div className="d-flex justify-content-end" >
+                    <div style={{ position: "relative", bottom: "10px", left: "10px" }}>
+                        <Button onClick={() => props.setAnswerSurvey(false)} className="justify-content-center">
 
                             <CloseIcon style={{ color: "white" }} ></CloseIcon>
                         </Button>
@@ -95,43 +108,72 @@ function AnswerSurveyPopup(props) {
                 <Typography variant="h3" color={"white"} gutterBottom>
                     Anket Cevapla
                 </Typography>
+                {focusSurvey && <div>
+                    <Button style={{ fontSize: "medium", color: "white", textTransform: "none" }} onClick={() => set_focusSurvey(false)} className="justify-content-start">
 
-                <div className="row mt-2" style={{ flex: "1", overflowY: "auto", }}>
-                    <div className="col-12">
+                        <ArrowBackIcon className="me-1" style={{ color: "white" }}></ArrowBackIcon>
+                        Geri
+                    </Button>
+                </div>}
 
-                        {props.survey.length === 0 ? <Typography variant="h5" color={"white"} gutterBottom>
-                            Henüz Anket Oluşturulmamış
-                        </Typography>
-                            : !focusSurvey ? props.survey.map((survey, index) =>
-                                <div key={index} className='d-flex'>
-                                    <Button onClick={() => handleFocus(index)} variant='contained' style={{ textTransform: "none", flex: "1" }} className='align-items-start mb-3 d-flex flex-column' >
-                                        <Typography variant="h4" color={"white"} gutterBottom>
-                                            {survey.surveyTitle}
-                                        </Typography>
-                                        <Typography style={{ textAlign: "start" }} variant="h6" color={"white"} gutterBottom>
-                                            {survey.surveyText}
-                                        </Typography>
-                                    </Button>
-                                </div>) :
-                                <div style={{ backgroundColor: "#684EB2" }} className="d-flex flex-column gap-2 p-3">
+                <div className="px-3 d-flex gap-3 flex-column mt-2" style={{ flex: "1", overflowY: "auto", }}>
 
-                                    <Typography variant="h4" color={"white"} gutterBottom>
-                                        {props.survey[focusedSurveyIndex].surveyTitle}
+
+                    {props.survey.length === 0 ? <Typography variant="h5" color={"white"} gutterBottom>
+                        Henüz Anket Oluşturulmamış
+                    </Typography>
+                        : !focusSurvey ? sortedSurveys.map((survey, index) => {
+                            var expireDate = survey.expireDate.split("-");
+                            var localTime = [expireDate[2], expireDate[1], expireDate[0]].join("-")
+
+                            var remaningDays = new Date(new Date(survey.expireDate) - new Date()).getDate();
+
+                            return <div key={index} className='d-flex flex-column rounded' style={{ backgroundColor: "#A182FA" }} >
+                                <ColoredButton onClick={() => handleFocus(index)} variant='contained' style={{
+                                    textTransform: "none", flex: "1"
+                                }} disableElevation className='align-items-start gap-1  d-flex flex-column' >
+                                    <Typography style={{ fontWeight: "200" }} className="col-12 text-end" variant="h5" color={"white"} gutterBottom>
+                                        {`Anketin bitmesine son ${remaningDays} gün.`}
                                     </Typography>
-                                    <Typography style={{ fontWeight: "light" }} variant="h5" color={"white"} gutterBottom>
-                                        {props.survey[focusedSurveyIndex].surveyText}
+                                    <Typography style={{ fontWeight: "200" }} variant="h4" color={"white"} gutterBottom>
+                                        {survey.surveyTitle}
                                     </Typography>
-                                    <form id="answer-survey-form" method="post" onSubmit={handleFormAction}>
-                                        {props.survey[focusedSurveyIndex].questions.map((question, index) =>
-                                            <AnswerQuestionBody handleAnsweredQuestionAmount={handleAnsweredQuestionAmount} key={index} id={index} question={question} > </AnswerQuestionBody>
-                                        )}
+                                    <Typography style={{ fontWeight: "200", textAlign: "start" }} variant="h6" color={"white"} gutterBottom>
+                                        {survey.surveyText}
+                                    </Typography>
+                                    <div className="col-12 d-flex px-2 rounded justify-content-between"  >
+                                        <Typography style={{ fontWeight: "100" }} variant="h6" color={"white"} gutterBottom>
+                                            Anketi oluşturan: {survey.ownerId}
+                                        </Typography>
+                                        <Typography style={{ fontWeight: "100" }} variant="h6" color={"white"} gutterBottom>
+                                            Bitiş tarihi: {localTime}
+                                        </Typography>
+                                    </div>
+                                </ColoredButton>
 
-                                    </form>
+                            </div>
+                        }) :
+                            <div style={{ backgroundColor: "#684EB2" }} className="d-flex flex-column gap-2 p-3">
 
-                                </div>
 
-                        }
-                    </div>
+                                <Typography variant="h4" color={"white"} gutterBottom>
+                                    {props.survey[focusedSurveyIndex].surveyTitle}
+                                </Typography>
+                                <Typography style={{ fontWeight: "light" }} variant="h5" color={"white"} gutterBottom>
+                                    {props.survey[focusedSurveyIndex].surveyText}
+                                </Typography>
+
+                                <form id="answer-survey-form" method="post" onSubmit={handleFormAction}>
+                                    {props.survey[focusedSurveyIndex].questions.map((question, index) =>
+                                        <AnswerQuestionBody handleAnsweredQuestionAmount={handleAnsweredQuestionAmount} key={index} id={index} question={question} > </AnswerQuestionBody>
+                                    )}
+
+                                </form>
+
+                            </div>
+
+                    }
+
 
 
                 </div>

@@ -52,24 +52,15 @@ function SurveyPopup(props) {
         var currentDate = new Date();
         var enteredDate = new Date(enteredDateString[0], parseInt(enteredDateString[1]) - 1, enteredDateString[2])
         var validDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 4, currentDate.getDate())
-        console.log(enteredDate > validDate || enteredDate <= currentDate);
-        console.log(enteredDate);
-        console.log(validDate);
-        console.log(currentDate);
         return enteredDate > validDate || enteredDate <= currentDate;
 
     }
 
     function finishSurveyCreation(event) {
         event.preventDefault();
-        var enteredDateString = surveyPreferences.expireDate.split("-");
-
-        var currentDate = new Date();
-        var enteredDate = new Date(enteredDateString[0], parseInt(enteredDateString[1]) - 1, enteredDateString[2])
-        var validDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 4, currentDate.getDate())
+        console.log(surveyPreferences.expireDate);
         props.addSurvey({ ...surveyPreferences, questions: [...questionArray] })
         props.setOpenSurveyCreation(false);
-        console.log({ ...surveyPreferences, questions: [...questionArray] });
 
     }
 
@@ -207,13 +198,13 @@ function SurveyPopup(props) {
         <div className="flex-container">
 
             <div className="create-survey d-flex flex-column p-4 rounded" >
-                <div className="row justify-content-start" style={{ position: "relative", bottom: "10px", right: "10px" }}>
-                    <div className="col">
-                        <Button onClick={() => props.setOpenSurveyCreation(false)} className="justify-content-start">
+                <div className="d-flex justify-content-end" >
 
-                            <CloseIcon style={{ color: "white" }} ></CloseIcon>
-                        </Button>
-                    </div>
+                    <Button style={{ position: "relative", bottom: "10px", left: "10px" }} onClick={() => props.setOpenSurveyCreation(false)} className="justify-content-center">
+
+                        <CloseIcon style={{ color: "white" }} ></CloseIcon>
+                    </Button>
+
                 </div>
                 <div className="row" style={{}}>
 
