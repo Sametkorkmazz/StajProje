@@ -41,8 +41,8 @@ function App() {
     console.log(event.target.email.value);
   }
   return <ThemeProvider theme={themeOptions}>
-    <div className="">
-      
+    <div className="" >
+
       {openSurveyCreation ?
         <SurveyPopup addSurvey={addSurvey} setOpenSurveyCreation={set_OpenSurveyCreation} /> : (openSurveyAnswer) && <AnswerSurveyPopup survey={surveyArray} setAnswerSurvey={set_OpenSurveyAnswer}></AnswerSurveyPopup>
       }

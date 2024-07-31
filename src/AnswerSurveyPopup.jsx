@@ -74,7 +74,8 @@ function AnswerSurveyPopup(props) {
     }
     return <Grow in={true}>
 
-        <div className="flex-container">
+        <div
+            className="flex-container" >
             <Dialog open={finishSurveyDialog}
                 onClose={() => set_finishSurveyDialog(false)}
                 aria-labelledby="alert-dialog-title"
@@ -131,9 +132,13 @@ function AnswerSurveyPopup(props) {
                             return <div key={index} className='d-flex flex-column rounded' style={{ backgroundColor: "#A182FA" }} >
                                 <ColoredButton onClick={() => handleFocus(index)} variant='contained' style={{
                                     textTransform: "none", flex: "1"
-                                }} disableElevation className='align-items-start gap-1  d-flex flex-column' >
+                                }}
+                                    sx={{
+                                        backgroundColor: remaningDays > 0 ? "#A182FA" : "#703579"
+                                    }}
+                                    disableElevation className='align-items-start gap-1  d-flex flex-column' >
                                     <Typography style={{ fontWeight: "200" }} className="col-12 text-end" variant="h5" color={"white"} gutterBottom>
-                                        {`Anketin bitmesine son ${remaningDays} gün.`}
+                                        {remaningDays > 0 ? `Anketin bitmesine son ${remaningDays} gün.` : "Anket bitmiştir."}
                                     </Typography>
                                     <Typography style={{ fontWeight: "200" }} variant="h4" color={"white"} gutterBottom>
                                         {survey.surveyTitle}
