@@ -26,7 +26,7 @@ import FormGroup from '@mui/material/FormGroup'
 function AnswerSurveyPopup(props) {
 
     const [focusedSurveyIndex, set_focusedSurveyIndex] = useState(0);
-    const [answeredQuestionArray, set_answeredQuestionArray] = useState(props.survey[focusedSurveyIndex].questions.map((item) => false))
+    const [answeredQuestionArray, set_answeredQuestionArray] = useState(props.survey.length > 0 && props.survey[focusedSurveyIndex].questions.map((item) => false))
 
     const [focusSurvey, set_focusSurvey] = useState(false);
 
@@ -63,7 +63,7 @@ function AnswerSurveyPopup(props) {
                     Anket Cevapla
                 </Typography>
 
-                <div className="row mt-2" style={{ flex:"1",overflowY: "auto", }}>
+                <div className="row mt-2" style={{ flex: "1", overflowY: "auto", }}>
                     <div className="col-12">
 
                         {props.survey.length === 0 ? <Typography variant="h5" color={"white"} gutterBottom>
@@ -103,7 +103,7 @@ function AnswerSurveyPopup(props) {
 
                 </div>
                 {focusSurvey && <div className="d-flex justify-content-end mt-3 gap-3 align-items-baseline" >
-                    <Typography variant="p" style={{ color: "white" }}>Cevaplanan Sorular {answeredQuestionArray.filter(c => c).length}/{props.survey[focusedSurveyIndex].questions.length}</Typography>
+                    <Typography variant="p" style={{ color: "white" }}>Cevaplanan Sorular {answeredQuestionArray.filter(c => c).length}/{props.survey.length && props.survey[focusedSurveyIndex].questions.length}</Typography>
                     <TextField style={{ flex: "0.25" }} InputLabelProps={{ form: "answer-survey-form" }} required size="small" label="Sicil"></TextField>
                     <Button type="submit" form="answer-survey-form" className="rounded-pill" variant="contained" style={{ height: "2.7rem", textTransform: "none" }}>
                         Cevapları Gönder

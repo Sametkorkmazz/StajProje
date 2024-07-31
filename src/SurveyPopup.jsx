@@ -16,7 +16,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import CloseIcon from '@mui/icons-material/Close';
 import Collapsible from "react-collapsible";
-import { Expand } from "@mui/icons-material";
+import { Expand, OfflineShareTwoTone } from "@mui/icons-material";
 
 
 function SurveyPopup(props) {
@@ -67,9 +67,9 @@ function SurveyPopup(props) {
         var currentDate = new Date();
         var enteredDate = new Date(enteredDateString[0], parseInt(enteredDateString[1]) - 1, enteredDateString[2])
         var validDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 4, currentDate.getDate())
-        console.log(enteredDate > validDate || enteredDate <= currentDate);
         props.addSurvey({ ...surveyPreferences, questions: [...questionArray] })
         props.setOpenSurveyCreation(false);
+        console.log({ ...surveyPreferences, questions: [...questionArray] });
 
     }
 
@@ -138,17 +138,6 @@ function SurveyPopup(props) {
         var newArray = questionArray.map((item) => item)
         var prev = newArray[id].required
         newArray[id].expanded = value;
-        if (value) {
-            const focusedQuestion = document.getElementById("" + id);
-            const bodyRect = document.getElementById("questions-body").getBoundingClientRect().top;
-            const elementRect = focusedQuestion.getBoundingClientRect().top;
-            const elementPosition = elementRect - bodyRect;
-            const offsetPosition = elementPosition - 10;
-            window.scrollTo({
-                top: offsetPosition,
-                behavior: 'smooth'
-            });
-        }
 
         set_questionArray(() => [...newArray])
 
@@ -175,9 +164,7 @@ function SurveyPopup(props) {
         }
         newArray[id].multiChoice = !prev;
 
-        const focusedQuestion = document.getElementById("" + id);
 
-        focusedQuestion.scrollIntoView({ behavior: 'smooth' });
 
         set_questionArray(() => [...newArray])
     }
@@ -285,7 +272,7 @@ function SurveyPopup(props) {
                         </TextField>
                     </div>
                 </div>
-                <div className="row pb-5 mt-1" id="questions-body" style={{ overflowY: "auto", }}>
+                <div className="row pb-2 mt-1" id="questions-body" style={{ overflowY: "auto", }}>
 
                     <div className="col-12">
                         {questionArray.map((soru, index) =>
