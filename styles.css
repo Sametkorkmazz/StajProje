@@ -1,0 +1,93 @@
+.popup-li li {
+    background-color: #41199C;
+    color: white;
+    border-color: grey;
+}
+
+.card {
+    background-color: #41199C;
+
+}
+
+a {
+    text-decoration: none;
+}
+
+
+
+.libutton {
+    line-height: 0.5;
+    font-size: 20px;
+    background-color: red
+}
+
+.changecolor {
+    border: none;
+    /* background-color: #41199C; */
+}
+
+.question-type {
+    background-color: #692dd8;
+}
+
+
+
+
+
+.divider {
+    background: "white"
+}
+
+.list-text {
+    text-align: end;
+    line-height: 1;
+    margin: 0;
+}
+
+#list {
+    color: white;
+
+}
+
+#list-card {
+    color: white;
+    background-color: #41199C;
+}
+
+#a {}
+
+
+.popup {
+    display: flex;
+    position: fixed;
+    inset: 0px;
+    width: 50%;
+    height: 75%;
+    max-width: 100vw;
+    max-height: 100dvh;
+    margin: auto;
+    background-color: #41199C;
+}
+
+.flex-container {
+    display: flex;
+    position: fixed;
+    inset: 0px;
+    width: 100%;
+    height: 100%;
+    max-width: 100vh;
+    max-height: 100vh;
+    margin: auto;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.create-survey {
+
+
+    width: 100vh;
+    height: 90vh;
+
+    background-color: #6045AE;
+}
