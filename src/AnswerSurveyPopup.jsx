@@ -21,14 +21,21 @@ import { useState } from "react";
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import Checkbox from '@mui/material/Checkbox';
-
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 import FormGroup from '@mui/material/FormGroup'
 function AnswerSurveyPopup(props) {
 
     const [focusedSurveyIndex, set_focusedSurveyIndex] = useState(0);
-    const [answeredQuestionArray, set_answeredQuestionArray] = useState(props.survey.length > 0 && props.survey[focusedSurveyIndex].questions.map((item) => false))
+    var questionAmount = props.survey.length > 0 ? props.survey[focusedSurveyIndex].questions.map((item) => false) : []
 
+    const [answeredQuestionArray, set_answeredQuestionArray] = useState(questionAmount)
+    const [cevaplayanSicil, set_cevaplayanSicil] = useState("");
     const [focusSurvey, set_focusSurvey] = useState(false);
+    const [finishSurveyDialog, set_finishSurveyDialog] = useState(false);
 
     function handleFocus(index) {
         set_focusedSurveyIndex(index)
@@ -36,8 +43,13 @@ function AnswerSurveyPopup(props) {
     }
     function handleFormAction(event) {
         event.preventDefault();
-        const data = new FormData(event.target);
-        console.log([...data.entries()]);
+        if (answeredQuestionArray.filter(c => c).length !== questionAmount.length) {
+            set_finishSurveyDialog(true);
+
+        }
+        else {
+            event.target.submit();
+        }
     }
     function handleAnsweredQuestionAmount(id, value) {
         var newArray = answeredQuestionArray.map((item) => item)
@@ -50,6 +62,27 @@ function AnswerSurveyPopup(props) {
     return <Grow in={true}>
 
         <div className="flex-container">
+            <Dialog open={finishSurveyDialog}
+                onClose={() => set_finishSurveyDialog(false)}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description">
+
+                <DialogTitle >
+                    {"Cevaplanmamış sorular var. Anketi cevaplamayı bitirmek ister misiniz?"}
+                </DialogTitle>
+                <DialogContent>
+
+                    <DialogContentText>
+                        Cevapladığınız Sorular {answeredQuestionArray.filter(c => c).length}/{questionAmount.length}
+                    </DialogContentText>
+                </DialogContent>
+
+                <DialogActions>
+                    <Button style={{ textTransform: "none" }} onClick={() => set_finishSurveyDialog(false)}>Geri dön</Button>
+                    <Button style={{ textTransform: "none" }} onClick={() => set_finishSurveyDialog(false)}>Evet</Button>
+                </DialogActions>
+
+            </Dialog>
             <div className="create-survey d-flex flex-column p-4 rounded">
                 <div className="row justify-content-start" style={{ position: "relative", bottom: "10px", right: "10px" }}>
                     <div className="col">
@@ -88,7 +121,7 @@ function AnswerSurveyPopup(props) {
                                     <Typography style={{ fontWeight: "light" }} variant="h5" color={"white"} gutterBottom>
                                         {props.survey[focusedSurveyIndex].surveyText}
                                     </Typography>
-                                    <form id="answer-survey-form" method="post">
+                                    <form id="answer-survey-form" method="post" onSubmit={handleFormAction}>
                                         {props.survey[focusedSurveyIndex].questions.map((question, index) =>
                                             <AnswerQuestionBody handleAnsweredQuestionAmount={handleAnsweredQuestionAmount} key={index} id={index} question={question} > </AnswerQuestionBody>
                                         )}
@@ -103,15 +136,23 @@ function AnswerSurveyPopup(props) {
 
                 </div>
                 {focusSurvey && <div className="d-flex justify-content-end mt-3 gap-3 align-items-baseline" >
-                    <Typography variant="p" style={{ color: "white" }}>Cevaplanan Sorular {answeredQuestionArray.filter(c => c).length}/{props.survey.length && props.survey[focusedSurveyIndex].questions.length}</Typography>
-                    <TextField style={{ flex: "0.25" }} InputLabelProps={{ form: "answer-survey-form" }} required size="small" label="Sicil"></TextField>
+                    <Typography variant="p" style={{ color: "white" }}>Cevaplanan Sorular {answeredQuestionArray.filter(c => c).length}/{questionAmount.length}</Typography>
+                    <TextField name="cevaplayanSicil"
+
+                        onInvalid={(event) => event.target.setCustomValidity(event.target.value.trim().length === 0 ? "Sicilinizi giriniz" : "")}
+                        onChange={(event) => {
+                            event.target.setCustomValidity(event.target.value.trim().length === 0 ? "Sicilinizi giriniz" : "");
+                            set_cevaplayanSicil(event.target.value)
+
+                        }}
+                        value={cevaplayanSicil} style={{ flex: "0.25" }} inputProps={{ form: "answer-survey-form" }} required size="small" label="Sicil"></TextField>
                     <Button type="submit" form="answer-survey-form" className="rounded-pill" variant="contained" style={{ height: "2.7rem", textTransform: "none" }}>
                         Cevapları Gönder
                     </Button>
                 </div>}
 
             </div>
-        </div></Grow>
+        </div></Grow >
 }
 
 export default AnswerSurveyPopup

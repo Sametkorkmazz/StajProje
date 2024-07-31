@@ -272,7 +272,7 @@ function SurveyPopup(props) {
                         </TextField>
                     </div>
                 </div>
-                <div className="row pb-2 mt-1" id="questions-body" style={{ overflowY: "auto", }}>
+                <div className="row pb-2 mt-1" id="questions-body" style={{ flex: "1", overflowY: "auto", }}>
 
                     <div className="col-12">
                         {questionArray.map((soru, index) =>
@@ -283,42 +283,44 @@ function SurveyPopup(props) {
                     </div>
 
                 </div>
-                {!addQuestionClicked ?
-                    <div className="col-12 mt-2 d-flex mb-auto" >
-                        <Button colorpalette={"red"} onClick={() => set_addQuestionClicked((prev) => !prev)} variant="contained" style={{ height: "2.7rem", textTransform: "none" }}>
-                            <AddIcon></AddIcon> Yeni soru</Button></div>
-                    : <div className="col d-flex">  <QuestionType set_soruArray={newQuestion} setSoruEkle={set_addQuestionClicked} /> </div>}
-                <div className="row mt-4 d-flex flex-column justify-content-between">
+                <div className="d-flex flex-column">
+                    {!addQuestionClicked ?
+                        <div className="col-12 mt-2 d-flex mb-auto" >
+                            <Button colorpalette={"red"} onClick={() => set_addQuestionClicked((prev) => !prev)} variant="contained" style={{ height: "2.7rem", textTransform: "none" }}>
+                                <AddIcon></AddIcon> Yeni soru</Button></div>
+                        : <div className="col d-flex">  <QuestionType set_soruArray={newQuestion} setSoruEkle={set_addQuestionClicked} /> </div>}
+                    <div className="row mt-4 d-flex flex-column justify-content-between">
 
 
 
 
-                    <div className="col-12 mt-2 d-flex justify-content-end gap-3 flex-wrap">
-                        <FormControlLabel style={{ color: "white", flex: "0.9" }} control={<Switch size="small" name="anonimAnswer" value={surveyPreferences.anonimAnswer} onClick={(event) => handleSurveyPreferences(event)} />} label="Anonim sonuçlar" />
+                        <div className="col-12 mt-2 d-flex gap-3 flex-wrap">
+                            <FormControlLabel style={{ color: "white", flex: "0.9" }} control={<Switch size="small" name="anonimAnswer" value={surveyPreferences.anonimAnswer} onClick={(event) => handleSurveyPreferences(event)} />} label="Anonim sonuçlar" />
 
-                        <FormControlLabel style={{ color: "white", flex: "0.8" }} control={<Switch size="small" name="anonimResult" value={surveyPreferences.anonimResult} onClick={(event) => handleSurveyPreferences(event)} />} label="Anonim cevap" />
-                        <label className="align-self-center" style={{ color: "white" }} htmlFor="expire-date">Bitiş tarihi:</label>
+                            <FormControlLabel style={{ color: "white", flex: "0.8" }} control={<Switch size="small" name="anonimResult" value={surveyPreferences.anonimResult} onClick={(event) => handleSurveyPreferences(event)} />} label="Anonim cevap" />
+                            <label className="align-self-center" style={{ color: "white" }} htmlFor="expire-date">Bitiş tarihi:</label>
 
-                        <input form="create-survey-form" min={minDate} max={maxDate} required className="rounded"
-                            style={{ border: "1px solid gray", color: "white", backgroundColor: "#6045AE", flex: "1", }} value={surveyPreferences.expireDate}
-                            onInvalid={(event) => event.target.setCustomValidity(handleDate() ? "Lütfen izin verilen aralıkta bir tarih giriniz." : "")}
-                            onChange={(event) => {
-                                handleSurveyPreferences(event)
-                                event.target.setCustomValidity(handleDate() ? "Lütfen izin verilen aralıkta bir tarih giriniz." : "")
-
-                            }} type="date" id="expire-date" name="expireDate" />
-                        <form id="create-survey-form" onSubmit={(event) => finishSurveyCreation(event)}>
-                            <TextField onInvalid={(event) => event.target.setCustomValidity("Sicilinizi giriniz")} style={{ flex: "1", minWidth: "70px" }} className="pe-2" id="outlined-basic" name="ownerId" required label="Sicil *" variant="outlined" size="small" value={surveyPreferences.ownerId}
+                            <input form="create-survey-form" min={minDate} max={maxDate} required className="rounded"
+                                style={{ border: "1px solid gray", color: "white", backgroundColor: "#6045AE", flex: "1", }} value={surveyPreferences.expireDate}
+                                onInvalid={(event) => event.target.setCustomValidity("Lütfen izin verilen aralıkta bir tarih giriniz.")}
                                 onChange={(event) => {
-                                    event.target.setCustomValidity(event.target.value.trim().length === 0 ? "Sicilinizi giriniz" : "")
                                     handleSurveyPreferences(event)
-                                }} />
+                                    event.target.setCustomValidity(handleDate() ? "Lütfen izin verilen aralıkta bir tarih giriniz." : "")
+
+                                }} type="date" id="expire-date" name="expireDate" />
+                            <form id="create-survey-form" onSubmit={(event) => finishSurveyCreation(event)}>
+                                <TextField onInvalid={(event) => event.target.setCustomValidity("Sicilinizi giriniz")} style={{ flex: "1", minWidth: "70px" }} className="pe-2" id="outlined-basic" name="ownerId" required label="Sicil *" variant="outlined" size="small" value={surveyPreferences.ownerId}
+                                    onChange={(event) => {
+                                        event.target.setCustomValidity(event.target.value.trim().length === 0 ? "Sicilinizi giriniz" : "")
+                                        handleSurveyPreferences(event)
+                                    }} />
 
 
-                        </form>
-                        <Button type="submit" form="create-survey-form" className="rounded-pill" variant="contained" style={{ height: "2.7rem", flex: "0.7", textTransform: "none" }}>
-                            Anketi Bitir
-                        </Button>
+                            </form>
+                            <Button type="submit" form="create-survey-form" className="rounded-pill" variant="contained" style={{ height: "2.7rem", flex: "0.7", textTransform: "none" }}>
+                                Anketi Bitir
+                            </Button>
+                        </div>
                     </div>
 
 

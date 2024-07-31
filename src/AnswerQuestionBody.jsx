@@ -153,12 +153,16 @@ function AnswerQuestionBody(props) {
                 : props.question.type === "metin" ?
                     <TextField multiline={true}
                         onChange={(event) => {
-                            event.target.setCustomValidity(event.target.value.trim().length === 0 ? "Lütfen bu alana cevabınızı yazın." : "");
-                            set_textQuestionAnswer(event.target.value)
-
-
+                            var value = event.target.value
+                            var valid = value.trim().length > 0
+                            event.target.setCustomValidity(!valid ? "Lütfen bu alana cevabınızı yazın." : "");
+                            set_textQuestionAnswer(value)
+                            props.handleAnsweredQuestionAmount(props.id, valid)
                         }
-                        } value={textQuestionAnswer} minRows={2} className='my-3' required={props.question.required} label="Cevabınız" InputProps={{
+                        }
+
+                        onInvalid={(event) => event.target.setCustomValidity("Lütfen bu alana cevabınızı yazın.")}
+                        value={textQuestionAnswer} minRows={2} className='my-3' required={props.question.required} label="Cevabınız" InputProps={{
                             startAdornment: (
                                 <InputAdornment position="start">
                                     <EditNoteIcon></EditNoteIcon>
@@ -180,7 +184,7 @@ function AnswerQuestionBody(props) {
                                     aria-labelledby="demo-row-radio-buttons-group-label"
                                     name={props.question.id + " Değerlendirme"}
                                     value={checkedChoice}
-                                    onChange={(event) => handleSingleChoice(event)}
+                                    onClick={(event) => handleSingleChoice(event)}
                                 >
                                     {props.question.options.map((option, index) => <FormControlLabel key={index} value={option.name} control={<Radio value={option.name} required={props.question.required} sx={{
                                         '& .MuiSvgIcon-root': {
