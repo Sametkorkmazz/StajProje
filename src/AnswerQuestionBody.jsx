@@ -25,6 +25,7 @@ import StarIcon from '@mui/icons-material/Star';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import Star from '@mui/icons-material/Star';
 function AnswerQuestionBody(props) {
+    const [textQuestionAnswer, set_textQuestionAnswer] = useState("");
     const [expanded, set_expanded] = useState(false)
     const choiceArray = props.question.options.map((option) => option.name)
     var choicesObject = {}
@@ -150,14 +151,21 @@ function AnswerQuestionBody(props) {
 
 
                 : props.question.type === "metin" ?
-                    <TextField multiline={true} minRows={2} className='my-3' required={props.question.required} label="Cevabınız" InputProps={{
-                        startAdornment: (
-                            <InputAdornment position="start">
-                                <EditNoteIcon></EditNoteIcon>
-                            </InputAdornment>
-                        ),
+                    <TextField multiline={true}
+                        onChange={(event) => {
+                            event.target.setCustomValidity(event.target.value.trim().length === 0 ? "Lütfen bu alana cevabınızı yazın." : "");
+                            set_textQuestionAnswer(event.target.value)
 
-                    }} InputLabelProps={{ required: false }}>
+
+                        }
+                        } value={textQuestionAnswer} minRows={2} className='my-3' required={props.question.required} label="Cevabınız" InputProps={{
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <EditNoteIcon></EditNoteIcon>
+                                </InputAdornment>
+                            ),
+
+                        }} InputLabelProps={{ required: false }}>
 
 
 
@@ -170,11 +178,11 @@ function AnswerQuestionBody(props) {
                                 <RadioGroup
                                     row
                                     aria-labelledby="demo-row-radio-buttons-group-label"
-                                    name="row-radio-buttons-group"
+                                    name={props.question.id + " Değerlendirme"}
                                     value={checkedChoice}
-                                    onClick={(event) => handleSingleChoice(event)}
+                                    onChange={(event) => handleSingleChoice(event)}
                                 >
-                                    {props.question.options.map((option, index) => <FormControlLabel key={index} value={option.name} control={<Radio required={props.question.required} sx={{
+                                    {props.question.options.map((option, index) => <FormControlLabel key={index} value={option.name} control={<Radio value={option.name} required={props.question.required} sx={{
                                         '& .MuiSvgIcon-root': {
                                             fontSize: "40px",
                                         },
