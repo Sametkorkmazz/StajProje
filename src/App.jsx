@@ -35,6 +35,13 @@ function App() {
 
     setSurveyArray(prev => [...prev, survey])
   }
+  function updateSurvey(survey, index) {
+    var temp = surveyArray.map(survey => survey)
+    temp[index] = survey;
+    setSurveyArray([...temp])
+    console.log(surveyArray);
+
+  }
 
   function textForm(event) {
     event.preventDefault();
@@ -44,7 +51,7 @@ function App() {
     <div className="" >
 
       {openSurveyCreation ?
-        <SurveyPopup addSurvey={addSurvey} setOpenSurveyCreation={set_OpenSurveyCreation} /> : (openSurveyAnswer) && <AnswerSurveyPopup survey={surveyArray} setAnswerSurvey={set_OpenSurveyAnswer}></AnswerSurveyPopup>
+        <SurveyPopup addSurvey={addSurvey} setOpenSurveyCreation={set_OpenSurveyCreation} /> : (openSurveyAnswer) && <AnswerSurveyPopup updateSurvey={updateSurvey} survey={surveyArray} setAnswerSurvey={set_OpenSurveyAnswer}></AnswerSurveyPopup>
       }
       <div style={{
         opacity: (openSurveyCreation || openSurveyAnswer) ? "20%" : "100%",

@@ -26,6 +26,7 @@ import StarBorderIcon from '@mui/icons-material/StarBorder';
 import Star from '@mui/icons-material/Star'
 import Rating from '@mui/material/Rating';
 import Box from '@mui/material/Box';
+import { removeLocalizedDigits } from '@mui/x-date-pickers/internals/hooks/useField/useField.utils';
 
 
 
@@ -41,10 +42,14 @@ function AnswerQuestionBody(props) {
         choiceArray[index] = checkedChoices[choiceArray[index]];
     }
     function handleMultiChange(event, name) {
-        var temp = { ...checkedChoices, [name]: event.target.checked }
+
+        var temp = {
+            ...checkedChoices,
+            [name]: event.target.checked
+        }
         var amount = 0;
         for (var key in temp) {
-            amount += (key ? 1 : 0)
+            amount += (temp[key] ? 1 : 0)
         }
         props.handleAnsweredQuestionAmount(props.id,
             amount > 0
@@ -53,7 +58,7 @@ function AnswerQuestionBody(props) {
             ...checkedChoices,
             [name]: event.target.checked
         }))
-        console.log(checkedChoices);
+
 
 
     }
@@ -110,7 +115,7 @@ function AnswerQuestionBody(props) {
                     {props.question.options.map((option, index) => <FormControlLabel key={index} name='checkbox' style={{ color: "white" }}
                         control={
                             <Checkbox
-                                onInvalid={(e) => e.target.setCustomValidity(requiredMessage)} required={requirement} value={option.name} disabled={disabled && !checkedChoices[option.name]} checked={checkedChoices[option.name]} onChange={(event) => handleMultiChange(event, option.name)} name={props.question.id + " " + props.question.questionName} />
+                                onInvalid={(e) => e.target.setCustomValidity(requiredMessage)} required={requirement} value={option.name} disabled={disabled && !checkedChoices[option.name]} checked={checkedChoices[option.name]} onChange={(event) => handleMultiChange(event, option.name)} name={props.id + " " + props.question.questionName} />
                         }
                         label={option.name}
 
@@ -165,6 +170,7 @@ function AnswerQuestionBody(props) {
                             props.handleAnsweredQuestionAmount(props.id, value.trim().length > 0)
                         }
                         }
+                        name={props.id + " " + props.question.questionName}
 
                         onInvalid={(event) => event.target.setCustomValidity("Lütfen bu alana cevabınızı yazın.")}
                         value={textQuestionAnswer} minRows={2} className='my-3' required={props.question.required} label="Cevabınız" InputProps={{
@@ -188,7 +194,7 @@ function AnswerQuestionBody(props) {
                                     className='align-items-center'
                                     row
                                     aria-labelledby="demo-row-radio-buttons-group-label"
-                                    name={props.question.id + " Değerlendirme"}
+                                    name={props.id + " " + props.question.questionName}
                                     value={checkedChoice}
                                     onClick={(event) => handleSingleChoice(event)}
                                 >

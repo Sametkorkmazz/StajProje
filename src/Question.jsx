@@ -42,7 +42,7 @@ function Question(props) {
 
 
     function addOption() {
-        var newOption = [...props.question.options, { name: "Seçenek " + (props.question.options.length + 1) }]
+        var newOption = [...props.question.options, { name: "Seçenek " + (props.question.options.length + 1), answers: [] }]
         props.changeOptionsOrder(props.id, newOption)
 
     }
@@ -116,7 +116,7 @@ function Question(props) {
 
         <Card style={{ backgroundColor: "#6045AE" }} className='me-2'>
             <CardContent  >
-                <div  className="container" >
+                <div className="container" >
                     <div className="d-flex justify-content-end">
 
                         <Button onClick={() => props.deleteQuestion(props.id)}>
