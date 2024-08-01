@@ -50,6 +50,15 @@ function AnswerSurveyPopup(props) {
     const [focusSurvey, set_focusSurvey] = useState(false);
     const [finishSurveyDialog, set_finishSurveyDialog] = useState(false);
 
+    function toLocalTime(date) {
+        var local = date.split("-");
+        return `${local[2]}-${local[1]}-${local[0]}`
+    }
+    function calculateRemainingDays(surveyDate) {
+        return new Date(new Date(surveyDate) - new Date()).getDate();
+
+    }
+
     function handleFocus(index) {
         set_focusedSurveyIndex(index)
         set_focusSurvey(true);
@@ -109,12 +118,16 @@ function AnswerSurveyPopup(props) {
                 <Typography variant="h3" color={"white"} gutterBottom>
                     Anket Cevapla
                 </Typography>
-                {focusSurvey && <div>
+                {focusSurvey && <div className="d-flex justify-content-between">
                     <Button style={{ fontSize: "medium", color: "white", textTransform: "none" }} onClick={() => set_focusSurvey(false)} className="justify-content-start">
 
                         <ArrowBackIcon className="me-1" style={{ color: "white" }}></ArrowBackIcon>
                         Geri
                     </Button>
+                    <Typography style={{ fontWeight: "200" }} variant="h6" color={"white"} gutterBottom>
+                        {new Date() < new Date(props.survey[focusedSurveyIndex].expireDate) ? `Anketin bitmesine son ${calculateRemainingDays(props.survey[focusedSurveyIndex].expireDate) + 1} gün.` : "Anket bitmiştir."}
+
+                    </Typography>
                 </div>}
 
                 <div className="px-3 d-flex gap-3 flex-column mt-2" style={{ flex: "1", overflowY: "auto", }}>
@@ -124,11 +137,10 @@ function AnswerSurveyPopup(props) {
                         Henüz Anket Oluşturulmamış
                     </Typography>
                         : !focusSurvey ? sortedSurveys.map((survey, index) => {
-                            var expireDate = survey.expireDate.split("-");
-                            var localTime = [expireDate[2], expireDate[1], expireDate[0]].join("-")
 
-                            var remaningDays = new Date(new Date(survey.expireDate) - new Date()).getDate();
+                            var localTime = toLocalTime(survey.expireDate)
 
+                            var remaningDays = calculateRemainingDays(survey.expireDate)
                             return <div key={index} className='d-flex flex-column rounded' style={{ backgroundColor: "#A182FA" }} >
                                 <ColoredButton onClick={() => handleFocus(index)} variant='contained' style={{
                                     textTransform: "none", flex: "1"
@@ -138,7 +150,7 @@ function AnswerSurveyPopup(props) {
                                     }}
                                     disableElevation className='align-items-start gap-1  d-flex flex-column' >
                                     <Typography style={{ fontWeight: "200" }} className="col-12 text-end" variant="h5" color={"white"} gutterBottom>
-                                        {remaningDays > 0 ? `Anketin bitmesine son ${remaningDays} gün.` : "Anket bitmiştir."}
+                                        {remaningDays > 0 ? `Anketin bitmesine son ${remaningDays + 1} gün.` : "Anket bitmiştir."}
                                     </Typography>
                                     <Typography style={{ fontWeight: "200" }} variant="h4" color={"white"} gutterBottom>
                                         {survey.surveyTitle}
@@ -160,6 +172,17 @@ function AnswerSurveyPopup(props) {
                         }) :
                             <div style={{ backgroundColor: "#684EB2" }} className="d-flex flex-column gap-2 p-3">
 
+
+                                <div className="d-flex justify-content-between">
+                                    <Typography style={{ fontWeight: "200" }} variant="h6" color={"white"} gutterBottom>
+                                        Anketi oluşturan: {props.survey[focusedSurveyIndex].ownerId}
+
+                                    </Typography>
+                                    <Typography style={{ fontWeight: "200" }} variant="h6" color={"white"} gutterBottom>
+                                        Bitiş tarihi: {toLocalTime(props.survey[focusedSurveyIndex].expireDate)}
+
+                                    </Typography>
+                                </div>
 
                                 <Typography variant="h4" color={"white"} gutterBottom>
                                     {props.survey[focusedSurveyIndex].surveyTitle}

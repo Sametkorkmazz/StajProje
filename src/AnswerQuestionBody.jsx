@@ -23,7 +23,12 @@ import FormLabel from '@mui/material/FormLabel';
 import EditNoteIcon from '@mui/icons-material/EditNote';
 import StarIcon from '@mui/icons-material/Star';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
-import Star from '@mui/icons-material/Star';
+import Star from '@mui/icons-material/Star'
+import Rating from '@mui/material/Rating';
+import Box from '@mui/material/Box';
+
+
+
 function AnswerQuestionBody(props) {
     const [textQuestionAnswer, set_textQuestionAnswer] = useState("");
     const [expanded, set_expanded] = useState(false)
@@ -154,10 +159,10 @@ function AnswerQuestionBody(props) {
                     <TextField multiline={true}
                         onChange={(event) => {
                             var value = event.target.value
-                            var valid = value.trim().length > 0
+                            var valid = !props.question.required || value.trim().length > 0
                             event.target.setCustomValidity(!valid ? "Lütfen bu alana cevabınızı yazın." : "");
                             set_textQuestionAnswer(value)
-                            props.handleAnsweredQuestionAmount(props.id, valid)
+                            props.handleAnsweredQuestionAmount(props.id, value.trim().length > 0)
                         }
                         }
 
@@ -180,6 +185,7 @@ function AnswerQuestionBody(props) {
                             <FormControl>
 
                                 <RadioGroup
+                                    className='align-items-center'
                                     row
                                     aria-labelledby="demo-row-radio-buttons-group-label"
                                     name={props.question.id + " Değerlendirme"}
@@ -193,10 +199,11 @@ function AnswerQuestionBody(props) {
                                         "& .MuiFormLabel-asterisk": {
                                             color: "red"
                                         }
-                                    }} checkedIcon={<Star  ></Star>} icon={parseInt(option.name.split(" ")[0]) < parseInt(checkedChoice.split(" ")[0]) ? <Star color="primary"></Star> : <StarBorderIcon ></StarBorderIcon>} />} />)}
-
-
+                                    }} checkedIcon={<Star  ></Star>} icon={parseInt(option.name.split(" ")[0]) < parseInt(checkedChoice === undefined ? 0 : checkedChoice.split(" ")[0]) ? <Star color="primary"></Star> : <StarBorderIcon ></StarBorderIcon>} />} />)}
+                                    <Box sx={{ color: "white" }}>{checkedChoice === undefined ? "" : checkedChoice.split(" ")[0]}</Box>
                                 </RadioGroup>
+
+
                             </FormControl>
 
 
