@@ -71,9 +71,9 @@ function Question(props) {
 
     }
 
-    return <Collapsible open={props.question.expanded}
+    return <Collapsible className='mb-2' open={props.question.expanded}
         trigger={<div className='d-flex gap-1' onMouseOver={() => set_buttonsHovered(true)} onMouseOut={() => set_buttonsHovered(false)}>
-            <Button variant='contained' className="mb-2 gap-2 justify-content-start" style={{ backgroundColor: "#684EB2", color: "white", textTransform: "none" }}
+            <Button variant='contained' className="gap-2 justify-content-start" style={{ textTransform: "none" }}
                 onClick={() => {
                     props.setExpanded(props.id, !props.question.expanded)
 
@@ -113,9 +113,9 @@ function Question(props) {
 
 
         </ div>}>
-
-        <Card style={{ backgroundColor: "#6045AE" }} className='me-2'>
-            <CardContent  >
+            <div className="d-flex"></div>
+        <Card variant='outlined'  className='me-2 mb-2'>
+            <CardContent >
                 <div className="container" >
                     <div className="d-flex justify-content-end">
 

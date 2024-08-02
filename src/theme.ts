@@ -3,21 +3,25 @@ import { createTheme } from '@mui/material/styles';
 export const themeOptions = createTheme({
 
   palette: {
-    mode: 'dark',
+    mode: 'light',
     primary: {
-      main: '#8a63f9',
+      main: '#12065c',
     },
     secondary: {
       main: '#9c27b0',
+    },
+    text: {
+      primary: '#12065c',
+      secondary: '#12065c',
     },
   },
   components: {
     MuiFormLabel: {
       styleOverrides: {
         asterisk: { opacity: "0" },
-       
+
       },
-      
+
     },
     MuiFormControlLabel: {
       styleOverrides: {
