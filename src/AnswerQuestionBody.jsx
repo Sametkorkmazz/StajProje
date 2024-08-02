@@ -1,16 +1,8 @@
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
 import React, { useEffect, useState } from 'react';
 import { Button, Collapse, RadioGroup, TextField } from '@mui/material';
 import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
-import Collapsible from 'react-collapsible';
-import Typography from '@mui/material/Typography';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import TextFormatIcon from '@mui/icons-material/TextFormat';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
@@ -26,9 +18,15 @@ import StarBorderIcon from '@mui/icons-material/StarBorder';
 import Star from '@mui/icons-material/Star'
 import Rating from '@mui/material/Rating';
 import Box from '@mui/material/Box';
-
+import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
 import { removeLocalizedDigits } from '@mui/x-date-pickers/internals/hooks/useField/useField.utils';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import Accordion from '@mui/material/Accordion';
 
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 
 function AnswerQuestionBody(props) {
@@ -109,11 +107,11 @@ function AnswerQuestionBody(props) {
                     break;
             }
         }
-        return <FormControl className='ps-5' required={props.question.required} error={error}>
+        return <FormControl className='ps-2' required={props.question.required} error={error}>
             <FormLabel component="legend">{message}</FormLabel>
             {props.question.multiChoice ?
                 <FormGroup  >
-                    {props.question.options.map((option, index) => <FormControlLabel key={index} name='checkbox' style={{ color: "white" }}
+                    {props.question.options.map((option, index) => <FormControlLabel key={index} name='checkbox'
                         control={
                             <Checkbox
                                 onInvalid={(e) => e.target.setCustomValidity(requiredMessage)} required={requirement} value={option.name} disabled={disabled && !checkedChoices[option.name]} checked={checkedChoices[option.name]} onChange={(event) => handleMultiChange(event, option.name)} name={props.id + " " + props.question.questionName} />
@@ -130,7 +128,7 @@ function AnswerQuestionBody(props) {
                     value={checkedChoice}
                     onClick={handleSingleChoice}
                 >
-                    {props.question.options.map((option, index) => <FormControlLabel key={index} label={option.name} value={option.name} control={<Radio required={props.question.required && checkedChoice === ""}  > </Radio>} name={props.id + " " + props.question.questionName} style={{ color: "white" }}></FormControlLabel>)}
+                    {props.question.options.map((option, index) => <FormControlLabel key={index} label={option.name} value={option.name} control={<Radio required={props.question.required && checkedChoice === ""}  > </Radio>} name={props.id + " " + props.question.questionName} ></FormControlLabel>)}
                 </RadioGroup>
 
             }
@@ -142,86 +140,95 @@ function AnswerQuestionBody(props) {
     }
 
 
-    return <Collapsible open={expanded} trigger={
-        <div className='d-flex gap-1'>
-            <Button variant='contained' size='large' className="mb-2 gap-2 justify-content-start" style={{ flex: "1", backgroundColor: "#684EB2", color: "white", textTransform: "none" }} onClick={() => set_expanded((prev) => !prev)}>
-                {expanded ? <ExpandLessIcon fontSize='small'></ExpandLessIcon> : <ExpandMoreIcon fontSize='small'></ExpandMoreIcon>}
+    return <Accordion style={{ border: "1px solid #12065c" }} expanded={expanded} >
+        <AccordionSummary style={{borderBottom:"1px solid #12065c"}}  aria-controls="panel2-content" expandIcon={<ArrowDropDownIcon />} onClick={() => set_expanded((prev) => !prev)}>
 
-                {props.id + 1 + ".    " + props.question.questionName}
+            <Button variant='contained' className="d-flex gap-2 justify-content-start" style={{ textTransform: "none" }} >
+
+                {props.id + 1 + ". " + props.question.questionName}
                 {props.question.type === "seçenek" ? <RadioButtonCheckedIcon></RadioButtonCheckedIcon> : props.question.type === "metin" ? <TextFormatIcon></TextFormatIcon> : <ThumbUpOffAltIcon></ThumbUpOffAltIcon>}
                 <div className='ms-1'> {props.question.required ? "    * Gerekli" : ""}</div>
             </Button>
 
 
 
-        </ div>}
-    >
-        <div style={{ backgroundColor: "#684EB2" }} className='d-flex flex-column'>
-
-            {props.question.type === "seçenek" ? <AnswerMultiChoiceQuestion> </AnswerMultiChoiceQuestion>
-
-
-                : props.question.type === "metin" ?
-                    <TextField multiline={true}
-                        onChange={(event) => {
-                            var value = event.target.value
-                            var valid = !props.question.required || value.trim().length > 0
-                            event.target.setCustomValidity(!valid ? "Lütfen bu alana cevabınızı yazın." : "");
-                            set_textQuestionAnswer(value)
-                            props.handleAnsweredQuestionAmount(props.id, value.trim().length > 0)
-                        }
-                        }
-                        name={props.id + " " + props.question.questionName}
-
-                        onInvalid={(event) => event.target.setCustomValidity("Lütfen bu alana cevabınızı yazın.")}
-                        value={textQuestionAnswer} minRows={2} className='my-3' required={props.question.required} label="Cevabınız" InputProps={{
-                            startAdornment: (
-                                <InputAdornment position="start">
-                                    <EditNoteIcon></EditNoteIcon>
-                                </InputAdornment>
-                            ),
-
-                        }} InputLabelProps={{ required: false }}>
+        </AccordionSummary>
+        <AccordionDetails>
+            <Card style={{ border: "none", boxShadow: "none" }} >
+                <CardContent>
 
 
+                    <div className='d-flex flex-column'>
 
-                    </TextField>
-                    : <div className='d-flex justiffy-content-center gap-1'>
+                        {props.question.type === "seçenek" ? <AnswerMultiChoiceQuestion> </AnswerMultiChoiceQuestion>
 
-                        {props.question.options[0].name.split(" ")[1] === "Yıldız" ?
-                            <FormControl>
 
-                                <RadioGroup
-                                    className='align-items-center'
-                                    row
-                                    aria-labelledby="demo-row-radio-buttons-group-label"
+                            : props.question.type === "metin" ?
+                                <TextField multiline={true}
+                                    onChange={(event) => {
+                                        var value = event.target.value
+                                        var valid = !props.question.required || value.trim().length > 0
+                                        event.target.setCustomValidity(!valid ? "Lütfen bu alana cevabınızı yazın." : "");
+                                        set_textQuestionAnswer(value)
+                                        props.handleAnsweredQuestionAmount(props.id, value.trim().length > 0)
+                                    }
+                                    }
                                     name={props.id + " " + props.question.questionName}
-                                    value={checkedChoice}
-                                    onClick={(event) => handleSingleChoice(event)}
-                                >
-                                    {props.question.options.map((option, index) => <FormControlLabel key={index} value={option.name} control={<Radio value={option.name} required={props.question.required} sx={{
-                                        '& .MuiSvgIcon-root': {
-                                            fontSize: "40px",
-                                        },
-                                        "& .MuiFormLabel-asterisk": {
-                                            color: "red"
-                                        }
-                                    }} checkedIcon={<Star  ></Star>} icon={parseInt(option.name.split(" ")[0]) < parseInt(checkedChoice === undefined ? 0 : checkedChoice.split(" ")[0]) ? <Star color="primary"></Star> : <StarBorderIcon ></StarBorderIcon>} />} />)}
-                                    <Box sx={{ color: "white" }}>{checkedChoice === undefined ? "" : checkedChoice.split(" ")[0]}</Box>
-                                </RadioGroup>
+
+                                    onInvalid={(event) => event.target.setCustomValidity("Lütfen bu alana cevabınızı yazın.")}
+                                    value={textQuestionAnswer} minRows={2} className='my-3' required={props.question.required} label="Cevabınız" InputProps={{
+                                        startAdornment: (
+                                            <InputAdornment position="start">
+                                                <EditNoteIcon></EditNoteIcon>
+                                            </InputAdornment>
+                                        ),
+
+                                    }} InputLabelProps={{ required: false }}>
 
 
-                            </FormControl>
+
+                                </TextField>
+                                : <div className='d-flex justiffy-content-center gap-1'>
+
+                                    {props.question.options[0].name.split(" ")[1] === "Yıldız" ?
+                                        <FormControl>
+
+                                            <RadioGroup
+                                                className='align-items-center'
+                                                row
+                                                aria-labelledby="demo-row-radio-buttons-group-label"
+                                                name={props.id + " " + props.question.questionName}
+                                                value={checkedChoice}
+                                                onClick={(event) => handleSingleChoice(event)}
+                                            >
+                                                {props.question.options.map((option, index) => <FormControlLabel key={index} value={option.name} control={<Radio value={option.name} required={props.question.required} sx={{
+                                                    '& .MuiSvgIcon-root': {
+                                                        fontSize: "40px",
+                                                    },
+                                                    "& .MuiFormLabel-asterisk": {
+                                                        color: "red"
+                                                    }
+                                                }} checkedIcon={<Star  ></Star>} icon={parseInt(option.name.split(" ")[0]) < parseInt(checkedChoice === undefined ? 0 : checkedChoice.split(" ")[0]) ? <Star color="primary"></Star> : <StarBorderIcon ></StarBorderIcon>} />} />)}
+                                                <Box >{checkedChoice === undefined ? "" : checkedChoice.split(" ")[0]}</Box>
+                                            </RadioGroup>
 
 
-                            : null}
+                                        </FormControl>
+
+
+                                        : null}
+                                </div>
+
+                        }
+
+
+
                     </div>
+                </CardContent>
+            </Card>
+        </AccordionDetails>
 
-            }
-
-
-
-        </div></Collapsible>
+    </Accordion>
 }
 
 export default AnswerQuestionBody

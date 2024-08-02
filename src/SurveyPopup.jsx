@@ -20,7 +20,6 @@ import { Expand, OfflineShareTwoTone } from "@mui/icons-material";
 import Card from "@mui/material/Card";
 import CardContent from '@mui/material/CardContent';
 import Box from "@mui/material/Box";
-
 function SurveyPopup(props) {
 
     const [questionArray, set_questionArray] = useState([
@@ -296,7 +295,7 @@ function SurveyPopup(props) {
 
                                     <input form="create-survey-form" min={minDate} max={maxDate} required className="rounded"
                                         style={{ color: "#12065c", border: "1px solid gray", flex: "1", }} value={surveyPreferences.expireDate}
-                                        onInvalid={(event) => event.target.setCustomValidity(handleDate() ? "Lütfen izin verilen aralıkta bir tarih giriniz." : "")}
+                                        onInvalid={(event) => event.target.setCustomValidity("Lütfen izin verilen aralıkta bir tarih giriniz.")}
                                         onChange={(event) => {
                                             handleSurveyPreferences(event)
                                             event.target.setCustomValidity(handleDate() ? "Lütfen izin verilen aralıkta bir tarih giriniz." : "")
