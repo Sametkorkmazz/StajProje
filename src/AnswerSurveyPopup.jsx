@@ -202,7 +202,7 @@ function AnswerSurveyPopup(props) {
                     </Typography>
                 </div>}
 
-                <div className="px-3 d-flex gap-3 flex-column mt-2" style={{ flex: "1", overflowY: "auto" }}>
+                <div className="px-3 d-flex gap-3 flex-column mt-2" >
 
 
                     {sortedSurveys.length === 0 ? <Typography variant="h5" color={"white"} gutterBottom>
@@ -284,20 +284,7 @@ function AnswerSurveyPopup(props) {
 
                                     </Tabs>
                                 </div>
-                                {surveyResults === "cevapla" ?
-                                    <form id="answer-survey-form" method="post" onSubmit={handleFormAction}>
-                                        {sortedSurveys[focusedSurveyIndex].questions.map((question, index) =>
-                                            <AnswerQuestionBody handleAnsweredQuestionAmount={handleAnsweredQuestionAmount} key={index} id={index} question={question} > </AnswerQuestionBody>
-                                        )}
-                                    </form>
 
-                                    : <div className="d-flex flex-column" style={{ flex: "1" }}>
-                                        <SurveyResults page={focusedQuestion - 1} dataSet={dataSet[focusedQuestion - 1]} question={sortedSurveys[focusedSurveyIndex].questions[focusedQuestion - 1]}> </SurveyResults>
-                                        <div className="d-flex mt-3 justify-content-between" >
-                                            <Pagination showFirstButton showLastButton onChange={(event, value) => set_focusedQuestion(value)} page={focusedQuestion} count={sortedSurveys[focusedSurveyIndex].questions.length} color="primary" />
-                                            <h2 style={{ color: "white" }}>{sortedSurveys[focusedSurveyIndex].questions[focusedQuestion - 1].questionName}</h2>
-                                        </div>
-                                    </div>}
 
 
                             </div>
@@ -306,7 +293,23 @@ function AnswerSurveyPopup(props) {
 
 
 
+
                 </div>
+                {surveyResults === "cevapla" ?
+                    <form  className="px-3"
+                    style={{flex:"1",overflowY : "auto"}} id="answer-survey-form" method="post" onSubmit={handleFormAction}>
+                        {sortedSurveys[focusedSurveyIndex].questions.map((question, index) =>
+                            <AnswerQuestionBody handleAnsweredQuestionAmount={handleAnsweredQuestionAmount} key={index} id={index} question={question} > </AnswerQuestionBody>
+                        )}
+                    </form>
+
+                    : <div className="d-flex flex-column" style={{ flex: "1" }}>
+                        <SurveyResults page={focusedQuestion - 1} dataSet={dataSet[focusedQuestion - 1]} question={sortedSurveys[focusedSurveyIndex].questions[focusedQuestion - 1]}> </SurveyResults>
+                        <div className="d-flex mt-3 justify-content-between" >
+                            <Pagination showFirstButton showLastButton onChange={(event, value) => set_focusedQuestion(value)} page={focusedQuestion} count={sortedSurveys[focusedSurveyIndex].questions.length} color="primary" />
+                            <h2 style={{ color: "white" }}>{sortedSurveys[focusedSurveyIndex].questions[focusedQuestion - 1].questionName}</h2>
+                        </div>
+                    </div>}
                 {(focusSurvey && surveyResults === "cevapla") && <div className="d-flex justify-content-end mt-3 gap-3 align-items-baseline" >
                     <Typography variant="p" style={{ color: "white" }}>Cevaplanan Sorular {answeredQuestionArray.filter(c => c).length}/{questionAmount.length}</Typography>
                     <TextField name="cevaplayanSicil"
