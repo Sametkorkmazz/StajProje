@@ -16,13 +16,83 @@ import AnswerSurveyPopup from './AnswerSurveyPopup';
 import { TextField } from '@mui/material';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
+
+let surveyController = new AbortController();
+
 function App() {
   const [surveyHover, setSurveyHover] = useState(false);
   const [buttonClicked, setButton] = useState(false);
   const [openSurveyCreation, set_OpenSurveyCreation] = useState(false);
   const [surveyArray, setSurveyArray] = useState([])
   const [openSurveyAnswer, set_OpenSurveyAnswer] = useState(false)
-  const [snackBarOpen, set_snackBarOpen] = useState(false)
+  const [feedbackOpen, set_feedbackOpen] = useState({ open: false, message: "", severity: "", color: "" })
+
+  const feedBack = (feedbackValues) => {
+    const { message, severity, color } = feedbackValues;
+    return <Snackbar
+      open={true}
+      autoHideDuration={2000}
+      anchorOrigin={{ vertical: "top", horizontal: "center" }}
+
+      onClose={(event, reason) => {
+        if (reason === 'clickaway') {
+          return;
+        }
+        set_feedbackOpen((prev) => ({ ...prev, open: false }))
+      }
+      }
+      key={"top" + "center"}
+    >
+      <Alert
+        color={color}
+        onClose={(event, reason) => {
+          if (reason === 'clickaway') {
+            return;
+          }
+          set_feedbackOpen((prev) => ({ ...prev, open: false }))
+
+        }
+        }
+        severity={severity}
+        variant="filled"
+        sx={{ width: '100%' }}
+      >
+        {message}
+      </Alert>
+    </Snackbar>
+  }
+
+  async function postSurvey(survey) {
+    surveyController.abort();
+    surveyController = new AbortController();
+    console.log(survey);
+    var formattedSurvey = {
+      surveyName: survey.surveyTitle,
+      creatorId: survey.ownerId,
+      surveyInfo: survey.surveyText,
+      teamId: "1234",
+      onlyForTeam: true,
+      creationTime: new Date().toISOString().split("T")[0],
+      deadline: survey.expireDate,
+      questionDTOList: [
+        survey.questions.map(question => ({
+          questionText: question.questionName,
+          questionType: question.type === "seçenek" ? "MULTIPLECHOICE" :  question.type  === "metin" ? "OPENENDED" : "RATING",
+          ratingMaxValue: question.options.length,
+          choices: [
+            question.options.map(option => ({ choiceText: option.name }))
+          ]
+
+        }))
+      ] 
+
+    }
+    console.log(formattedSurvey);
+    
+    set_feedbackOpen({ open: true, message: "Anket oluşturuldu.", severity: "success", color: "primary" })
+
+  }
+
 
   function handleOver() {
     setSurveyHover(true);
@@ -46,45 +116,14 @@ function App() {
 
   }
 
-  function textForm(event) {
-    event.preventDefault();
-    console.log(event.target.email.value);
-  }
+
+
   return <ThemeProvider theme={themeOptions}>
     <div className="" >
-      <Snackbar
-
-        autoHideDuration={5000}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        open={snackBarOpen}
-        onClose={(event, reason) => {
-          if (reason === 'clickaway') {
-            return;
-          }
-          set_snackBarOpen(false)
-        }
-        }
-        key={"top" + "center"}
-      >
-        <Alert
-          color='primary'
-          onClose={(event, reason) => {
-            if (reason === 'clickaway') {
-              return;
-            }
-            set_snackBarOpen(false)
-          }
-          }
-          severity="success"
-          variant="filled"
-          sx={{ width: '100%' }}
-        >
-          Anket oluşturuldu!
-        </Alert>
-      </Snackbar>
-        {openSurveyCreation ?
-          <SurveyPopup set_snackBarOpen={set_snackBarOpen} addSurvey={addSurvey} setOpenSurveyCreation={set_OpenSurveyCreation} /> : (openSurveyAnswer) && <AnswerSurveyPopup updateSurvey={updateSurvey} survey={surveyArray} setAnswerSurvey={set_OpenSurveyAnswer}></AnswerSurveyPopup>
-        }
+      {feedbackOpen.open && feedBack(feedbackOpen)}
+      {openSurveyCreation ?
+        <SurveyPopup postSurvey={postSurvey} addSurvey={addSurvey} setOpenSurveyCreation={set_OpenSurveyCreation} /> : (openSurveyAnswer) && <AnswerSurveyPopup updateSurvey={updateSurvey} survey={surveyArray} setAnswerSurvey={set_OpenSurveyAnswer}></AnswerSurveyPopup>
+      }
       <div style={{
         opacity: (openSurveyCreation || openSurveyAnswer) ? "20%" : "100%",
         pointerEvents: (openSurveyCreation || openSurveyAnswer) ? "none" : "auto",

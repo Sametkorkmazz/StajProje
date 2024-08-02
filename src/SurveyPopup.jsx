@@ -80,8 +80,9 @@ function SurveyPopup(props) {
                 set_emptySurveyError({ empty: true, message: "Ankette boş soru olamaz." });
             }
             else {
-                props.set_snackBarOpen(true);
+
                 props.addSurvey({ ...surveyPreferences, questions: [...questionArray] })
+                props.postSurvey({ ...surveyPreferences, questions: [...questionArray] });
                 props.setOpenSurveyCreation(false);
             }
         }
@@ -217,14 +218,25 @@ function SurveyPopup(props) {
 
 
     }
-    return <Grow in={true}>
 
-        <div className="flex-container">
-            <Snackbar
+    const answerCreationFeedback = (message, variant, color) => {
 
-                autoHideDuration={4000}
-                anchorOrigin={{ vertical: "top", horizontal: "center" }}
-                open={emptySurveyError.empty}
+        return <Snackbar
+
+            autoHideDuration={4000}
+            anchorOrigin={{ vertical: "top", horizontal: "center" }}
+            open={true}
+            onClose={(event, reason) => {
+                if (reason === 'clickaway') {
+                    return;
+                }
+                set_emptySurveyError((prev) => ({ ...prev, empty: false }))
+            }
+            }
+            key={"top" + "center"}
+        >
+            <Alert
+                color={color}
                 onClose={(event, reason) => {
                     if (reason === 'clickaway') {
                         return;
@@ -232,24 +244,22 @@ function SurveyPopup(props) {
                     set_emptySurveyError((prev) => ({ ...prev, empty: false }))
                 }
                 }
-                key={"top" + "center"}
+                severity={variant}
+                variant="filled"
+                sx={{ width: '100%' }}
             >
-                <Alert
-                    color='secondary'
-                    onClose={(event, reason) => {
-                        if (reason === 'clickaway') {
-                            return;
-                        }
-                        set_emptySurveyError((prev) => ({ ...prev, empty: false }))
-                    }
-                    }
-                    severity="error"
-                    variant="filled"
-                    sx={{ width: '100%' }}
-                >
-                    {emptySurveyError.message}
-                </Alert>
-            </Snackbar>
+                {message}
+            </Alert>
+        </Snackbar>
+    }
+
+
+
+    return <Grow in={true}>
+
+        <div className="flex-container">
+            {emptySurveyError.empty && answerCreationFeedback(emptySurveyError.message, "error", "secondary")}
+
             <Card className="">
                 <CardContent className="d-flex">
                     <div className="create-survey d-flex flex-column p-4 rounded" >

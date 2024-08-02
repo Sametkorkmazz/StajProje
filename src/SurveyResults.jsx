@@ -26,7 +26,9 @@ function SurveyResults(props) {
     const [questionsAnswered, set_questionAnswered] = useState();
     const [pieData, set_pieData] = useState([]);
     const [tableData, set_tableData] = useState({});
+
     useEffect(() => {
+
         set_resultType(props.question.type === "metin" ? "tablo" : "grafik")
         for (let index = 0; index < props.dataSet.length; index++) {
             const element = props.dataSet[index];
@@ -38,17 +40,17 @@ function SurveyResults(props) {
         }
 
         var pieTemp = []
-        var tableTemp = { columns: [{ field: 'id', headerName: "Sicil" }], rows: [] }
+        var tableTemp = { columns: [{ field: 'id', headerName: "Sicil" },], rows: [] }
         props.question.options.forEach((option, index) => {
             tableTemp.columns.push({
-                field: option.name, headerName: option.name,flex:1,
+                field: option.name, headerName: option.name, flex: 1,
 
 
                 valueGetter: (value) => {
-                    if(!value){
+                    if (!value) {
                         return ""
                     }
-                    return props.question.type !== "metin" ?  "işaretlenmiş" : value
+                    return props.question.type !== "metin" ? "işaretlenmiş" : value
                 },
 
                 renderCell: (params) => {
@@ -63,14 +65,21 @@ function SurveyResults(props) {
 
                 },
             })
+
             option.answers.forEach((answer, index) => {
-                var index = tableTemp.rows.length;
-                tableTemp.rows.forEach((row, index) => {
-                    if (row["sicil"] ?? row["sicil"] === answer) {
-                        index = row;
+
+
+                var previouslyAddedIndex = tableTemp.rows.length;
+                tableTemp.rows.forEach((row, rowIndex) => {
+
+
+                    if (row["id"] === answer) {
+                        previouslyAddedIndex = rowIndex;
                     }
                 })
-                if (index === tableTemp.rows.length) {
+                if (previouslyAddedIndex === tableTemp.rows.length) {
+
+
                     if (props.question.type === "metin") {
                         tableTemp.rows.push({ id: answer.sicil, [option.name]: answer.answerValue })
 
@@ -78,10 +87,12 @@ function SurveyResults(props) {
                     else {
                         tableTemp.rows.push({ id: answer, [option.name]: true })
 
+
                     }
                 }
                 else {
-                    tableTemp.rows[index][option.name] = option.name;
+
+                    tableTemp.rows[previouslyAddedIndex][option.name] = true;
                 }
             }
 

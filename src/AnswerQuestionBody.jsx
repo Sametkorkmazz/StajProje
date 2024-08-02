@@ -62,9 +62,13 @@ function AnswerQuestionBody(props) {
 
     }
     function handleSingleChoice(event) {
-        set_checkedChoice((prev) => prev !== event.target.value ? event.target.value : "")
+       
+        
+        set_checkedChoice((prev) =>  prev !== event.target.value ? event.target.value : "")
+ 
+        
         props.handleAnsweredQuestionAmount(props.id,
-            event.target.value !== checkedChoice
+            event.target.value !== undefined && event.target.value !== checkedChoice 
         )
 
     }

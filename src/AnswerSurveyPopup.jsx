@@ -38,15 +38,46 @@ import SurveyResults from "./SurveyResults";
 import Pagination from '@mui/material/Pagination';
 import Card from "@mui/material/Card";
 import CardContent from '@mui/material/CardContent';
+import { Snackbar, Alert } from "@mui/material";
 function AnswerSurveyPopup(props) {
 
-    // const ColoredButton = styled(Button)(({ theme }) => ({
-    //     color: "primary",
-    //     backgroundColor: "primary",
-    //     '&:hover': {
-    //         backgroundColor: "#9C27B0",
-    //     },
-    // }));
+
+
+    const [feedBackOpen, set_feedBackOpen] = useState({ open: false, message: "", severity: "", color: "" })
+    const feedBack = (feedbackValues) => {
+        const { message, severity, color } = feedbackValues;
+        return <Snackbar
+            open={true}
+            autoHideDuration={2000}
+            anchorOrigin={{ vertical: "top", horizontal: "center" }}
+
+            onClose={(event, reason) => {
+                if (reason === 'clickaway') {
+                    return;
+                }
+                set_feedBackOpen((prev) => ({ ...prev, open: false }))
+            }
+            }
+            key={"top" + "center"}
+        >
+            <Alert
+                color={color}
+                onClose={(event, reason) => {
+                    if (reason === 'clickaway') {
+                        return;
+                    }
+                    set_feedBackOpen((prev) => ({ ...prev, open: false }))
+
+                }
+                }
+                severity={severity}
+                variant="filled"
+                sx={{ width: '100%' }}
+            >
+                {message}
+            </Alert>
+        </Snackbar>
+    }
     for (let i = 0; i < props.survey.length; i++) {
         props.survey["index"] = i;
     }
@@ -108,6 +139,7 @@ function AnswerSurveyPopup(props) {
             set_cevaplayanSicil("")
             set_answeredQuestionArray(questionAmount)
             sendAnswers();
+            set_feedBackOpen({ open: true, message: "Anket cevaplandı!", severity: "success", color: "primary" })
         }
 
     }
@@ -143,7 +175,7 @@ function AnswerSurveyPopup(props) {
         }
         props.updateSurvey(modifiedSurvey, sortedSurveys[focusedSurveyIndex].index);
         set_focusSurvey(false);
-
+        
 
     }
     function handleAnsweredQuestionAmount(id, value) {
@@ -156,6 +188,8 @@ function AnswerSurveyPopup(props) {
     return <Grow in={true} >
 
         <div className="flex-container" >
+            {feedBackOpen.open && feedBack(feedBackOpen)}
+
             <Card variant="outlined" style={{ flexShrink: surveyResults === "sonuçlar" ? "0" : "1" }}   >
                 <CardContent className="d-flex">
                     <div className="create-survey d-flex flex-column p-4 rounded" >
