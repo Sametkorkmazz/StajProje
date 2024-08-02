@@ -21,7 +21,6 @@ import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
-import { removeLocalizedDigits } from '@mui/x-date-pickers/internals/hooks/useField/useField.utils';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Accordion from '@mui/material/Accordion';

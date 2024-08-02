@@ -7,7 +7,6 @@ import Zoom from '@mui/material/Zoom';
 import Collapse from '@mui/material/Collapse';
 import Grow from '@mui/material/Grow';
 import SurveyButton from './SurveyButton';
-import './App.css'
 import SurveyPopup from './SurveyPopup';
 import SurveyMenu from './SurveyMenu';
 import { themeOptions } from './theme';
@@ -16,7 +15,6 @@ import AnswerSurveyPopup from './AnswerSurveyPopup';
 import { TextField } from '@mui/material';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
-
 let surveyController = new AbortController();
 
 function App() {
@@ -77,18 +75,18 @@ function App() {
       questionDTOList: [
         survey.questions.map(question => ({
           questionText: question.questionName,
-          questionType: question.type === "seçenek" ? "MULTIPLECHOICE" :  question.type  === "metin" ? "OPENENDED" : "RATING",
+          questionType: question.type === "seçenek" ? "MULTIPLECHOICE" : question.type === "metin" ? "OPENENDED" : "RATING",
           ratingMaxValue: question.options.length,
           choices: [
             question.options.map(option => ({ choiceText: option.name }))
           ]
 
         }))
-      ] 
+      ]
 
     }
     console.log(formattedSurvey);
-    
+
     set_feedbackOpen({ open: true, message: "Anket oluşturuldu.", severity: "success", color: "primary" })
 
   }
