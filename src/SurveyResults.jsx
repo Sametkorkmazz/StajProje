@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Collapsible from 'react-collapsible';
 import { Button, Collapse, RadioGroup, TextField } from '@mui/material';
 import Tabs from '@mui/material/Tabs';
@@ -16,47 +16,74 @@ import { Height } from "@mui/icons-material";
 import { PieChart } from '@mui/x-charts/PieChart';
 import PieChartIcon from '@mui/icons-material/PieChart';
 import InsertChartIcon from '@mui/icons-material/InsertChart';
+import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
 function SurveyResults(props) {
 
 
     const [resultGraphType, set_resultGraphType] = useState("bar")
     const [resultType, set_resultType] = useState("grafik")
-    const [pieData, set_pieData] = useState([]);
 
+    const [pieData, set_pieData] = useState([]);
+    const [tableData, set_tableData] = useState({});
+    useEffect(() => {
+        var pieTemp = []
+        var tableTemp = { columns: [{ field: 'id', headerName: "Sicil" }], rows: [] }
+        props.question.options.forEach((option, index) => {
+            tableTemp.columns.push({ field: option.name, headerName: option.name, renderCell: () => <CheckBoxIcon /> })
+            option.answers.forEach((answer, index) => {
+                var index = tableTemp.rows.length;
+                tableTemp.rows.forEach((row, index) => {
+                    if (row["sicil"] ?? row["sicil"] === answer) {
+                        index = row;
+                    }
+                })
+                if (index === tableTemp.rows.length) {
+                    tableTemp.rows.push({ id: answer, [option.name]: option.name })
+                }
+                else {
+                    tableTemp.rows[index][option.name] = option.name;
+                }
+            }
+
+            )
+        })
+        set_tableData({ ...tableTemp });
+        props.dataSet.forEach((element, index) => {
+
+            pieTemp.push({ id: index, value: element.answeredAmount, label: element.optionName.length < 30 ? String.fromCharCode(65 + index) + " " + element.optionName : String.fromCharCode(65 + index) + " Uzun seçenek" })
+        });
+        set_pieData([...pieTemp])
+
+
+
+
+    }, [props.page])
 
     const chartSetting = {
         xAxis: [
             {
                 label: 'Seçilme miktarı',
+
+
+
             },
         ],
 
         grid: { vertical: true },
-
-
     };
-    var labelChar = "A"
-    function createPieData() {
-        var temp = []
-        props.dataSet.forEach((element, index) => {
-            console.log(element);
-            temp.push({ id: index, value: element.answeredAmount, label: String.fromCharCode(65 + index) + " " + element.optionName })
-        });
-        console.log(temp);
-        set_pieData([...temp])
-    }
+
+
+
+
 
     function handleGraphChange(value) {
-        if (value === "pie") {
-            createPieData();
-        }
 
-        console.log(pieData);
         set_resultGraphType(value);
     }
 
-    return <div className="d-flex flex-column" style={{ flex: "1" }} >
-        <div className="">
+    return <div className="d-flex flex-column gap-2" style={{ flex: "1" }} >
+        <div className="justify-content-center d-flex">
             <Tabs
 
                 value={resultType}
@@ -72,7 +99,10 @@ function SurveyResults(props) {
                 <Tab icon={<PersonOutlineIcon></PersonOutlineIcon>} style={{ textTransform: "none", fontSize: "medium" }} value="tablo" />
 
             </Tabs>
-            <Tabs
+        </div>
+
+        <div>
+            {resultType === "grafik" && <Tabs
 
                 value={resultGraphType}
                 onChange={(event, newValue) => handleGraphChange(newValue)}
@@ -85,37 +115,79 @@ function SurveyResults(props) {
                 <Tab icon={<EqualizerIcon style={{ rotate: "90deg" }}></EqualizerIcon>} style={{ textTransform: "none", fontSize: "medium" }} className="me-1" value="bar" />
                 <Tab icon={<PieChartIcon></PieChartIcon>} style={{ textTransform: "none", fontSize: "medium" }} value="pie" />
 
-            </Tabs>
+            </Tabs>}
         </div>
         <div className="d-flex flex-column" style={{ flexGrow: "1", flexShrink: "0", flexBasis: "0" }}>
-            {resultGraphType === "bar" ?
+
+
+            {resultType === "grafik" ? resultGraphType === "bar" ?
                 <BarChart
 
                     margin={{ left: 150 }}
                     dataset={props.dataSet}
-                    yAxis={[{ scaleType: 'band', dataKey: 'optionName' }]}
-                    series={[{ dataKey: 'answeredAmount', label: props.question.questionName }]}
+                    yAxis={[{
+                        valueFormatter: (optionName, context) =>
+                        (context.location === 'tick'
+                            ? optionName.length > 30 ? "Uzun seçenek" : optionName : optionName)
+                        ,
+                        scaleType: 'band', dataKey: 'optionName'
+                    }]}
+                    series={[{
+                        dataKey: 'answeredAmount',
+                        label: (location) => {
+                            if (location === "tooltip") {
+                                return `Seçilme miktarı`
+                            }
+                            return props.question.questionName
+                        }
+                    }]}
                     layout="horizontal"
                     {...chartSetting}
                     barLabel="value"
 
 
+
                 />
-                : <div className="d-flex align-items-center" style={{ flex: "1" }}>
+                :
 
-                    <h1 style={{color:"white"}}>{props.question.questionName}</h1>
-                    <PieChart
-                        series={[
-                            {
-                                data: pieData,
-                                arcLabel: (item) => `${item.label.split(" ")[0]} (${item.value})`,
+                <PieChart
+                    margin={{ right: 200 }}
+                    series={[
+                        {
+                            data: pieData,
 
-                                arcLabelMinAngle: 45,
+                            arcLabel: (item) => `${item.label.split(" ")[0]} (${item.value})`,
 
+                            arcLabelMinAngle: 45,
+
+                        },
+                    ]}
+
+                /> :
+                <DataGrid
+                    slots={{ toolbar: GridToolbar }}
+                    slotProps={{
+                        toolbar: {
+                            showQuickFilter: true,
+                        },
+
+                    }}
+                    rows={tableData.rows}
+                    columns={tableData.columns}
+                    initialState={{
+                        pagination: {
+                            paginationModel: {
+                                pageSize: 5,
                             },
-                        ]}
-
-                    /></div>}
+                        },
+                    }}
+                    pageSizeOptions={[5]}
+                    checkboxSelection
+                    disableRowSelectionOnClick
+                    disableColumnFilter
+                    disableColumnSelector
+                    disableDensitySelector
+                />}
 
 
         </div>

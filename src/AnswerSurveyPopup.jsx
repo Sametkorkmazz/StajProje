@@ -35,6 +35,7 @@ import { blue } from '@mui/material/colors';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import SurveyResults from "./SurveyResults";
+import Pagination from '@mui/material/Pagination';
 function AnswerSurveyPopup(props) {
 
     const ColoredButton = styled(Button)(({ theme }) => ({
@@ -50,11 +51,10 @@ function AnswerSurveyPopup(props) {
     var sortedSurveys = props.survey.map(item => item);
     sortedSurveys.sort((a, b) => new Date(a.expireDate) - new Date(b.expireDate))
 
-
+    const [focusedQuestion, set_focusedQuestion] = useState(1);
     const [surveyResults, set_surveyResults] = useState("cevapla");
 
     const [focusedSurveyIndex, set_focusedSurveyIndex] = useState(0);
-    const [originalIndex, set_originalIndex] = useState(0);
 
     var questionAmount = sortedSurveys.length > 0 ? sortedSurveys[focusedSurveyIndex].questions.map((item) => false) : []
 
@@ -109,9 +109,11 @@ function AnswerSurveyPopup(props) {
         }
 
     }
+
+
+
     function sendAnswers() {
         var formData = $('#answer-survey-form').serializeArray();
-        console.log(formData);
         var modifiedSurvey = sortedSurveys[focusedSurveyIndex];
         for (let index = 0; index < formData.length - 1; index++) {
             var values = formData[index].name.split(" ");
@@ -263,8 +265,12 @@ function AnswerSurveyPopup(props) {
                                         value={surveyResults}
                                         onChange={(event, newValue) => {
                                             createResultGraphs();
+                                            set_answeredQuestionArray(questionAmount);
+                                            set_cevaplayanSicil("");
                                             set_surveyResults(newValue)
-                                            console.log(dataSet);
+
+
+
 
                                         }}
                                         style={{ fontSize: "large" }}
@@ -285,7 +291,13 @@ function AnswerSurveyPopup(props) {
                                         )}
                                     </form>
 
-                                    : sortedSurveys[focusedSurveyIndex].questions.map((question, index) => <SurveyResults dataSet={dataSet[index]} key={index} id={index} question={question}> </SurveyResults>)}
+                                    : <div className="d-flex flex-column" style={{ flex: "1" }}>
+                                        <SurveyResults page={focusedQuestion - 1} dataSet={dataSet[focusedQuestion - 1]} question={sortedSurveys[focusedSurveyIndex].questions[focusedQuestion - 1]}> </SurveyResults>
+                                        <div className="d-flex mt-3 justify-content-between" >
+                                            <Pagination showFirstButton showLastButton onChange={(event, value) => set_focusedQuestion(value)} page={focusedQuestion} count={sortedSurveys[focusedSurveyIndex].questions.length} color="primary" />
+                                            <h2 style={{ color: "white" }}>{sortedSurveys[focusedSurveyIndex].questions[focusedQuestion - 1].questionName}</h2>
+                                        </div>
+                                    </div>}
 
 
                             </div>
@@ -295,7 +307,7 @@ function AnswerSurveyPopup(props) {
 
 
                 </div>
-                {focusSurvey && <div className="d-flex justify-content-end mt-3 gap-3 align-items-baseline" >
+                {(focusSurvey && surveyResults === "cevapla") && <div className="d-flex justify-content-end mt-3 gap-3 align-items-baseline" >
                     <Typography variant="p" style={{ color: "white" }}>Cevaplanan Sorular {answeredQuestionArray.filter(c => c).length}/{questionAmount.length}</Typography>
                     <TextField name="cevaplayanSicil"
 
