@@ -198,7 +198,7 @@ function SurveyResults(props) {
                         disableColumnSelector
                         disableDensitySelector
                     />
-                : <h1>Bu soruya henüz cevap verilmemiş.</h1>}
+                : <h1 style={{flex:1}}>Bu soruya henüz cevap verilmemiş.</h1>}
 
 
         </div>

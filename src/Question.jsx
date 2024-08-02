@@ -161,7 +161,7 @@ function Question(props) {
                         {props.question.type === "seçenek" ?
 
 
-                            <Button onClick={addOption} style={{ color: "white" }} variant="text"><AddCircleOutlineIcon className='me-1'></AddCircleOutlineIcon>Yeni Seçenek</Button>
+                            <Button onClick={addOption}  variant="text"><AddCircleOutlineIcon className='me-1'></AddCircleOutlineIcon>Yeni Seçenek</Button>
 
                             : props.question.type === "değerlendirme" ?
                                 <FormControl style={{ flex: "0.2" }} className='ms-3 mt-3'>
