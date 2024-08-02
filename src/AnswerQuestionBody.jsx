@@ -140,8 +140,8 @@ function AnswerQuestionBody(props) {
     }
 
 
-    return <Accordion style={{ border: "1px solid #12065c" }} expanded={expanded} >
-        <AccordionSummary style={{borderBottom:"1px solid #12065c"}}  aria-controls="panel2-content" expandIcon={<ArrowDropDownIcon />} onClick={() => set_expanded((prev) => !prev)}>
+    return <Accordion  style={{ border: "1px solid #12065c" }}  expanded={expanded} >
+        <AccordionSummary  style={{borderBottom:"1px solid #12065c"}}  aria-controls="panel2-content" expandIcon={<ArrowDropDownIcon />} onClick={() => set_expanded((prev) => !prev)}>
 
             <Button variant='contained' className="d-flex gap-2 justify-content-start" style={{ textTransform: "none" }} >
 

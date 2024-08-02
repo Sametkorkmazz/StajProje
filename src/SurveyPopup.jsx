@@ -195,16 +195,14 @@ function SurveyPopup(props) {
     }
 
     function changeQuestionName(id, value) {
+        var newArray = questionArray.map(item => item);
+        newArray[id].questionName = value;
+        if (newArray[id].type === "metin") {
+            newArray[id].options[0].name = value
+        }
 
-        set_questionArray((prev) => prev.map((soru, index) => {
-            if (index === id) {
-                if (soru.type === "metin") {
-                    soru.options[0].name = value
-                }
-                soru.questionName = value;
-            }
-            return soru;
-        }))
+
+        set_questionArray([...newArray])
 
 
     }

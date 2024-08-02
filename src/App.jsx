@@ -67,7 +67,7 @@ function App() {
         key={"top" + "center"}
       >
         <Alert
-        color='primary'
+          color='primary'
           onClose={(event, reason) => {
             if (reason === 'clickaway') {
               return;
@@ -82,9 +82,9 @@ function App() {
           Anket oluşturuldu!
         </Alert>
       </Snackbar>
-      {openSurveyCreation ?
-        <SurveyPopup set_snackBarOpen={set_snackBarOpen} addSurvey={addSurvey} setOpenSurveyCreation={set_OpenSurveyCreation} /> : (openSurveyAnswer) && <AnswerSurveyPopup updateSurvey={updateSurvey} survey={surveyArray} setAnswerSurvey={set_OpenSurveyAnswer}></AnswerSurveyPopup>
-      }
+        {openSurveyCreation ?
+          <SurveyPopup set_snackBarOpen={set_snackBarOpen} addSurvey={addSurvey} setOpenSurveyCreation={set_OpenSurveyCreation} /> : (openSurveyAnswer) && <AnswerSurveyPopup updateSurvey={updateSurvey} survey={surveyArray} setAnswerSurvey={set_OpenSurveyAnswer}></AnswerSurveyPopup>
+        }
       <div style={{
         opacity: (openSurveyCreation || openSurveyAnswer) ? "20%" : "100%",
         pointerEvents: (openSurveyCreation || openSurveyAnswer) ? "none" : "auto",

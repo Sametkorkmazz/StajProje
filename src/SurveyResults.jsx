@@ -22,11 +22,12 @@ function SurveyResults(props) {
 
 
     const [resultGraphType, set_resultGraphType] = useState("bar")
-    const [resultType, set_resultType] = useState("grafik")
-    const [questionsAnswered, set_questionAnswered] = useState(false);
+    const [resultType, set_resultType] = useState(props.question.type === "metin" ? "tablo" : "grafik")
+    const [questionsAnswered, set_questionAnswered] = useState();
     const [pieData, set_pieData] = useState([]);
     const [tableData, set_tableData] = useState({});
     useEffect(() => {
+        set_resultType(props.question.type === "metin" ? "tablo" : "grafik")
         for (let index = 0; index < props.dataSet.length; index++) {
             const element = props.dataSet[index];
             if (element.answeredAmount > 0) {
@@ -39,7 +40,29 @@ function SurveyResults(props) {
         var pieTemp = []
         var tableTemp = { columns: [{ field: 'id', headerName: "Sicil" }], rows: [] }
         props.question.options.forEach((option, index) => {
-            tableTemp.columns.push({ field: option.name, headerName: option.name, renderCell: () => <CheckBoxIcon /> })
+            tableTemp.columns.push({
+                field: option.name, headerName: option.name,flex:1,
+
+
+                valueGetter: (value) => {
+                    if(!value){
+                        return ""
+                    }
+                    return props.question.type !== "metin" ?  "işaretlenmiş" : value
+                },
+
+                renderCell: (params) => {
+                    if (props.question.type === "metin") {
+                        return params.row[option.name]
+                    }
+                    if (params.row[option.name] === true) {
+                        return <CheckBoxIcon> </CheckBoxIcon>;
+                    }
+
+                    return ""
+
+                },
+            })
             option.answers.forEach((answer, index) => {
                 var index = tableTemp.rows.length;
                 tableTemp.rows.forEach((row, index) => {
@@ -48,7 +71,14 @@ function SurveyResults(props) {
                     }
                 })
                 if (index === tableTemp.rows.length) {
-                    tableTemp.rows.push({ id: answer, [option.name]: option.name })
+                    if (props.question.type === "metin") {
+                        tableTemp.rows.push({ id: answer.sicil, [option.name]: answer.answerValue })
+
+                    }
+                    else {
+                        tableTemp.rows.push({ id: answer, [option.name]: true })
+
+                    }
                 }
                 else {
                     tableTemp.rows[index][option.name] = option.name;
@@ -104,14 +134,14 @@ function SurveyResults(props) {
 
             >
 
-                <Tab icon={<InsertChartIcon></InsertChartIcon>} style={{ textTransform: "none", fontSize: "medium" }} className="me-1" value="grafik" />
+                <Tab disabled={props.question.type === "metin"} icon={<InsertChartIcon></InsertChartIcon>} style={{ textTransform: "none", fontSize: "medium" }} className="me-1" value="grafik" />
                 <Tab icon={<PersonOutlineIcon></PersonOutlineIcon>} style={{ textTransform: "none", fontSize: "medium" }} value="tablo" />
 
             </Tabs>
         </div>
 
         <div>
-            {resultType === "grafik" && <Tabs
+            {(resultType === "grafik" && props.question.type !== "metin") && <Tabs
 
                 value={resultGraphType}
                 onChange={(event, newValue) => handleGraphChange(newValue)}
@@ -129,7 +159,7 @@ function SurveyResults(props) {
         <div className="d-flex flex-column" style={{ flexGrow: "1", flexShrink: "0", flexBasis: "0" }}>
 
             {questionsAnswered ?
-                resultType === "grafik" ? resultGraphType === "bar" ?
+                (props.question.type !== "metin" && resultType === "grafik") ? resultGraphType === "bar" ?
 
                     <BarChart
 
@@ -179,6 +209,10 @@ function SurveyResults(props) {
                         slotProps={{
                             toolbar: {
                                 showQuickFilter: true,
+                                printOptions: {
+                                    hideFooter: true,
+                                    hideToolbar: true,
+                                }
                             },
 
                         }}
@@ -193,12 +227,12 @@ function SurveyResults(props) {
                         }}
                         pageSizeOptions={[5]}
                         checkboxSelection
+
                         disableRowSelectionOnClick
-                        disableColumnFilter
-                        disableColumnSelector
-                        disableDensitySelector
+
+
                     />
-                : <h1 style={{flex:1}}>Bu soruya henüz cevap verilmemiş.</h1>}
+                : <h1 style={{ flex: 1 }}>Bu soruya henüz cevap verilmemiş.</h1>}
 
 
         </div>
