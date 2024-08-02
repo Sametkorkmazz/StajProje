@@ -15,6 +15,7 @@ import { BarChart } from '@mui/x-charts/BarChart';
 import { Height } from "@mui/icons-material";
 import { PieChart } from '@mui/x-charts/PieChart';
 import PieChartIcon from '@mui/icons-material/PieChart';
+import InsertChartIcon from '@mui/icons-material/InsertChart';
 function SurveyResults(props) {
 
 
@@ -66,8 +67,9 @@ function SurveyResults(props) {
                 indicatorColor="primary"
 
             >
-                <Tab icon={<EqualizerIcon></EqualizerIcon>} style={{ textTransform: "none", fontSize: "medium" }} className="me-1" value="tablo" />
-                <Tab icon={<PersonOutlineIcon></PersonOutlineIcon>} style={{ textTransform: "none", fontSize: "medium" }} value="grafik" />
+
+                <Tab icon={<InsertChartIcon></InsertChartIcon>} style={{ textTransform: "none", fontSize: "medium" }} className="me-1" value="grafik" />
+                <Tab icon={<PersonOutlineIcon></PersonOutlineIcon>} style={{ textTransform: "none", fontSize: "medium" }} value="tablo" />
 
             </Tabs>
             <Tabs
@@ -80,15 +82,16 @@ function SurveyResults(props) {
                 indicatorColor="primary"
 
             >
-                <Tab icon={<EqualizerIcon></EqualizerIcon>} style={{ textTransform: "none", fontSize: "medium" }} className="me-1" value="bar" />
+                <Tab icon={<EqualizerIcon style={{ rotate: "90deg" }}></EqualizerIcon>} style={{ textTransform: "none", fontSize: "medium" }} className="me-1" value="bar" />
                 <Tab icon={<PieChartIcon></PieChartIcon>} style={{ textTransform: "none", fontSize: "medium" }} value="pie" />
 
             </Tabs>
         </div>
-        <div className="" style={{ flexGrow: "1", flexShrink: "0", flexBasis: "0" }}>
+        <div className="d-flex flex-column" style={{ flexGrow: "1", flexShrink: "0", flexBasis: "0" }}>
             {resultGraphType === "bar" ?
                 <BarChart
-                    margin={{ left: 100 }}
+
+                    margin={{ left: 150 }}
                     dataset={props.dataSet}
                     yAxis={[{ scaleType: 'band', dataKey: 'optionName' }]}
                     series={[{ dataKey: 'answeredAmount', label: props.question.questionName }]}
@@ -98,18 +101,21 @@ function SurveyResults(props) {
 
 
                 />
-                : <PieChart
-                    series={[
-                        {
-                            data: pieData,
-                            arcLabel: (item) => `${item.label.split(" ")[0]} (${item.value})`,
+                : <div className="d-flex align-items-center" style={{ flex: "1" }}>
 
-                            arcLabelMinAngle: 45,
+                    <h1 style={{color:"white"}}>{props.question.questionName}</h1>
+                    <PieChart
+                        series={[
+                            {
+                                data: pieData,
+                                arcLabel: (item) => `${item.label.split(" ")[0]} (${item.value})`,
 
-                        },
-                    ]}
+                                arcLabelMinAngle: 45,
 
-                />}
+                            },
+                        ]}
+
+                    /></div>}
 
 
         </div>
