@@ -22,7 +22,10 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import TextFormatIcon from '@mui/icons-material/TextFormat';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
-
+import Accordion from '@mui/material/Accordion';
+import AccordionActions from '@mui/material/AccordionActions';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
 function Question(props) {
 
 

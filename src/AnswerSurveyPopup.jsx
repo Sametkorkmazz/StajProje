@@ -144,109 +144,108 @@ function AnswerSurveyPopup(props) {
     }
     return <Grow in={true}>
         <div className="flex-container">
-            <Card>
+            <Card variant="outlined" style={{ flexShrink: surveyResults === "sonuçlar" ? "0" : "1" }}   >
                 <CardContent className="d-flex">
+                    <div className="create-survey d-flex flex-column p-4 rounded">
+                        <Dialog open={finishSurveyDialog}
+                            onClose={() => set_finishSurveyDialog(false)}
+                            aria-labelledby="alert-dialog-title"
+                            aria-describedby="alert-dialog-description">
 
-                    <Dialog open={finishSurveyDialog}
-                        onClose={() => set_finishSurveyDialog(false)}
-                        aria-labelledby="alert-dialog-title"
-                        aria-describedby="alert-dialog-description">
+                            <DialogTitle >
+                                {"Cevaplanmamış sorular var. Anketi cevaplamayı bitirmek ister misiniz?"}
+                            </DialogTitle>
+                            <DialogContent>
 
-                        <DialogTitle >
-                            {"Cevaplanmamış sorular var. Anketi cevaplamayı bitirmek ister misiniz?"}
-                        </DialogTitle>
-                        <DialogContent>
+                                <DialogContentText>
+                                    Cevapladığınız Sorular {answeredQuestionArray.filter(c => c).length}/{questionAmount.length}
+                                </DialogContentText>
+                            </DialogContent>
 
-                            <DialogContentText>
-                                Cevapladığınız Sorular {answeredQuestionArray.filter(c => c).length}/{questionAmount.length}
-                            </DialogContentText>
-                        </DialogContent>
+                            <DialogActions>
+                                <Button style={{ textTransform: "none" }} onClick={() => set_finishSurveyDialog(false)}>Geri dön</Button>
+                                <Button style={{ textTransform: "none" }} onClick={() => {
 
-                        <DialogActions>
-                            <Button style={{ textTransform: "none" }} onClick={() => set_finishSurveyDialog(false)}>Geri dön</Button>
-                            <Button style={{ textTransform: "none" }} onClick={() => {
+                                    sendAnswers();
+                                    set_finishSurveyDialog(false)
 
-                                sendAnswers();
-                                set_finishSurveyDialog(false)
+                                }}
+                                >Evet</Button>
+                            </DialogActions>
 
-                            }}
-                            >Evet</Button>
-                        </DialogActions>
+                        </Dialog>
+                        <div className="d-flex flex-column " style={{ flexGrow: "1" }}>
+                            <div className="d-flex" >
+                                <Typography className="me-auto" variant="h3" gutterBottom>
+                                    {focusSurvey ? sortedSurveys[focusedSurveyIndex].surveyTitle : "Anket Cevapla"}
+                                </Typography>
+                                <div style={{ position: "relative", bottom: "10px", left: "10px" }}>
+                                    <Button onClick={() => props.setAnswerSurvey(false)} className="justify-content-center">
 
-                    </Dialog>
-                    <div className="create-survey d-flex flex-column p-4 rounded" style={{ flexShrink: surveyResults === "sonuçlar" ? "0" : "1" }}>
-                        <div className="d-flex" >
-                            <Typography className="me-auto" variant="h3" gutterBottom>
-                                {focusSurvey ? sortedSurveys[focusedSurveyIndex].surveyTitle : "Anket Cevapla"}
-                            </Typography>
-                            <div style={{ position: "relative", bottom: "10px", left: "10px" }}>
-                                <Button onClick={() => props.setAnswerSurvey(false)} className="justify-content-center">
+                                        <CloseIcon  ></CloseIcon>
+                                    </Button>
+                                </div>
 
-                                    <CloseIcon  ></CloseIcon>
-                                </Button>
                             </div>
 
-                        </div>
+                            {focusSurvey && <div className="d-flex justify-content-between">
+                                <Button style={{ fontSize: "medium", textTransform: "none" }} onClick={() => {
+                                    set_focusSurvey(false)
+                                    set_answeredQuestionArray(questionAmount)
+                                    set_cevaplayanSicil("");
+                                    set_surveyResults("cevapla")
+                                }} className="justify-content-start">
 
-                        {focusSurvey && <div className="d-flex justify-content-between">
-                            <Button style={{ fontSize: "medium", textTransform: "none" }} onClick={() => {
-                                set_focusSurvey(false)
-                                set_answeredQuestionArray(questionAmount)
-                                set_cevaplayanSicil("");
-                                set_surveyResults("cevapla")
-                            }} className="justify-content-start">
+                                    <ArrowBackIcon className="me-1" ></ArrowBackIcon>
+                                    Geri
+                                </Button>
+                                <Typography style={{ fontWeight: "200" }} variant="h6" gutterBottom>
+                                    {new Date() < new Date(sortedSurveys[focusedSurveyIndex].expireDate) ? `Anketin bitmesine son ${calculateRemainingDays(sortedSurveys[focusedSurveyIndex].expireDate) + 1} gün.` : "Anket bitmiştir."}
 
-                                <ArrowBackIcon className="me-1" ></ArrowBackIcon>
-                                Geri
-                            </Button>
-                            <Typography style={{ fontWeight: "200" }} variant="h6" gutterBottom>
-                                {new Date() < new Date(sortedSurveys[focusedSurveyIndex].expireDate) ? `Anketin bitmesine son ${calculateRemainingDays(sortedSurveys[focusedSurveyIndex].expireDate) + 1} gün.` : "Anket bitmiştir."}
+                                </Typography>
+                            </div>}
 
-                            </Typography>
-                        </div>}
-
-                        <div className="d-flex gap-3 flex-column mt-2" style={{ flex: "1", overflowY: "auto" }}>
+                            <div className="d-flex gap-3 flex-column mt-2" style={{ flex: "1", overflowY: "auto" }}>
 
 
-                            {sortedSurveys.length === 0 ? <Typography variant="h5" gutterBottom>
-                                Henüz Anket Oluşturulmamış
-                            </Typography>
-                                : !focusSurvey ? sortedSurveys.map((survey, index) => {
+                                {sortedSurveys.length === 0 ? <Typography variant="h5" gutterBottom>
+                                    Henüz Anket Oluşturulmamış
+                                </Typography>
+                                    : !focusSurvey ? sortedSurveys.map((survey, index) => {
 
-                                    var localTime = toLocalTime(survey.expireDate)
+                                        var localTime = toLocalTime(survey.expireDate)
 
-                                    var remaningDays = calculateRemainingDays(survey.expireDate)
-                                    return <div key={index} className='d-flex flex-column rounded'>
-                                        <Button onClick={() => handleFocus(index)} variant='outlined' style={{
-                                            textTransform: "none", flex: "1"
-                                        }}
-                                            color={remaningDays > 0 ? "primary" : "secondary"}
+                                        var remaningDays = calculateRemainingDays(survey.expireDate)
+                                        return <div key={index} className='d-flex flex-column rounded'>
+                                            <Button onClick={() => handleFocus(index)} variant='outlined' style={{
+                                                textTransform: "none", flex: "1"
+                                            }}
+                                                color={remaningDays > 0 ? "primary" : "secondary"}
 
-                                            disableElevation className='align-items-start gap-1  d-flex flex-column' >
-                                            <Typography style={{ fontWeight: "200" }} className="col-12 text-end" variant="h5" gutterBottom>
-                                                {remaningDays > 0 ? `Anketin bitmesine son ${remaningDays + 1} gün.` : "Anket bitmiştir."}
-                                            </Typography>
-                                            <Typography style={{ fontWeight: "200" }} variant="h4" gutterBottom>
-                                                {survey.surveyTitle}
-                                            </Typography>
-                                            <Typography style={{ fontWeight: "200", textAlign: "start" }} variant="h6" gutterBottom>
-                                                {survey.surveyText}
-                                            </Typography>
-                                            <div className="col-12 d-flex px-2 rounded justify-content-between"  >
-                                                <Typography style={{ fontWeight: "100" }} variant="h6" gutterBottom>
-                                                    Anketi oluşturan: {survey.ownerId}
+                                                disableElevation className='align-items-start gap-1  d-flex flex-column' >
+                                                <Typography style={{ fontWeight: "200" }} className="col-12 text-end" variant="h5" gutterBottom>
+                                                    {remaningDays > 0 ? `Anketin bitmesine son ${remaningDays + 1} gün.` : "Anket bitmiştir."}
                                                 </Typography>
-                                                <Typography style={{ fontWeight: "100" }} variant="h6" gutterBottom>
-                                                    Bitiş tarihi: {localTime}
+                                                <Typography style={{ fontWeight: "200" }} variant="h4" gutterBottom>
+                                                    {survey.surveyTitle}
                                                 </Typography>
-                                            </div>
-                                        </Button>
+                                                <Typography style={{ fontWeight: "200", textAlign: "start" }} variant="h6" gutterBottom>
+                                                    {survey.surveyText}
+                                                </Typography>
+                                                <div className="col-12 d-flex px-2 rounded justify-content-between"  >
+                                                    <Typography style={{ fontWeight: "100" }} variant="h6" gutterBottom>
+                                                        Anketi oluşturan: {survey.ownerId}
+                                                    </Typography>
+                                                    <Typography style={{ fontWeight: "100" }} variant="h6" gutterBottom>
+                                                        Bitiş tarihi: {localTime}
+                                                    </Typography>
+                                                </div>
+                                            </Button>
 
-                                    </div>
-                                }) :
-                                    <Card variant="outlined" className="d-flex flex-column" style={{ flex: "1" }}>
-                                        <CardContent className="d-flex px-3 flex-column" style={{ flex: "1" }}>
+                                        </div>
+                                    }) :
 
+                                        <div className="d-flex flex-column" style={{ flex: "1" }}>
 
 
                                             <div className="d-flex flex-wrap justify-content-between">
@@ -304,30 +303,29 @@ function AnswerSurveyPopup(props) {
                                                     </div>
                                                 </div>}
 
-
-                                        </CardContent>
-                                    </Card>
-                            }
+                                        </div>
+                                }
 
 
+
+                            </div>
+                            {(focusSurvey && surveyResults === "cevapla") && <div className="d-flex justify-content-end mt-3 gap-3 align-items-baseline" >
+                                <Typography variant="p" style={{ color: "white" }}>Cevaplanan Sorular {answeredQuestionArray.filter(c => c).length}/{questionAmount.length}</Typography>
+                                <TextField name="cevaplayanSicil"
+
+                                    onInvalid={(event) => event.target.setCustomValidity(event.target.value.trim().length === 0 ? "Sicilinizi giriniz" : "")}
+                                    onChange={(event) => {
+                                        event.target.setCustomValidity(event.target.value.trim().length === 0 ? "Sicilinizi giriniz" : "");
+                                        set_cevaplayanSicil(event.target.value)
+
+                                    }}
+                                    value={cevaplayanSicil} style={{ flex: "0.25" }} inputProps={{ form: "answer-survey-form" }} required size="small" label="Sicil"></TextField>
+                                <Button type="submit" form="answer-survey-form" className="rounded-pill" variant="contained" style={{ height: "2.7rem", textTransform: "none" }}>
+                                    Cevapları Gönder
+                                </Button>
+                            </div>}
 
                         </div>
-                        {(focusSurvey && surveyResults === "cevapla") && <div className="d-flex justify-content-end mt-3 gap-3 align-items-baseline" >
-                            <Typography variant="p" style={{ color: "white" }}>Cevaplanan Sorular {answeredQuestionArray.filter(c => c).length}/{questionAmount.length}</Typography>
-                            <TextField name="cevaplayanSicil"
-
-                                onInvalid={(event) => event.target.setCustomValidity(event.target.value.trim().length === 0 ? "Sicilinizi giriniz" : "")}
-                                onChange={(event) => {
-                                    event.target.setCustomValidity(event.target.value.trim().length === 0 ? "Sicilinizi giriniz" : "");
-                                    set_cevaplayanSicil(event.target.value)
-
-                                }}
-                                value={cevaplayanSicil} style={{ flex: "0.25" }} inputProps={{ form: "answer-survey-form" }} required size="small" label="Sicil"></TextField>
-                            <Button type="submit" form="answer-survey-form" className="rounded-pill" variant="contained" style={{ height: "2.7rem", textTransform: "none" }}>
-                                Cevapları Gönder
-                            </Button>
-                        </div>}
-
                     </div>
                 </CardContent>
             </Card>
