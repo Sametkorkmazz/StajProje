@@ -14,12 +14,15 @@ import { themeOptions } from './theme';
 import { ThemeProvider } from '@mui/material/styles';
 import AnswerSurveyPopup from './AnswerSurveyPopup';
 import { TextField } from '@mui/material';
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 function App() {
   const [surveyHover, setSurveyHover] = useState(false);
   const [buttonClicked, setButton] = useState(false);
   const [openSurveyCreation, set_OpenSurveyCreation] = useState(false);
   const [surveyArray, setSurveyArray] = useState([])
   const [openSurveyAnswer, set_OpenSurveyAnswer] = useState(false)
+  const [snackBarOpen, set_snackBarOpen] = useState(false)
 
   function handleOver() {
     setSurveyHover(true);
@@ -49,9 +52,38 @@ function App() {
   }
   return <ThemeProvider theme={themeOptions}>
     <div className="" >
+      <Snackbar
 
+        autoHideDuration={5000}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        open={snackBarOpen}
+        onClose={(event, reason) => {
+          if (reason === 'clickaway') {
+            return;
+          }
+          set_snackBarOpen(false)
+        }
+        }
+        key={"top" + "center"}
+      >
+        <Alert
+        color='primary'
+          onClose={(event, reason) => {
+            if (reason === 'clickaway') {
+              return;
+            }
+            set_snackBarOpen(false)
+          }
+          }
+          severity="success"
+          variant="filled"
+          sx={{ width: '100%' }}
+        >
+          Anket oluşturuldu!
+        </Alert>
+      </Snackbar>
       {openSurveyCreation ?
-        <SurveyPopup addSurvey={addSurvey} setOpenSurveyCreation={set_OpenSurveyCreation} /> : (openSurveyAnswer) && <AnswerSurveyPopup updateSurvey={updateSurvey} survey={surveyArray} setAnswerSurvey={set_OpenSurveyAnswer}></AnswerSurveyPopup>
+        <SurveyPopup set_snackBarOpen={set_snackBarOpen} addSurvey={addSurvey} setOpenSurveyCreation={set_OpenSurveyCreation} /> : (openSurveyAnswer) && <AnswerSurveyPopup updateSurvey={updateSurvey} survey={surveyArray} setAnswerSurvey={set_OpenSurveyAnswer}></AnswerSurveyPopup>
       }
       <div style={{
         opacity: (openSurveyCreation || openSurveyAnswer) ? "20%" : "100%",

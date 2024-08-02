@@ -20,12 +20,15 @@ import { Expand, OfflineShareTwoTone } from "@mui/icons-material";
 import Card from "@mui/material/Card";
 import CardContent from '@mui/material/CardContent';
 import Box from "@mui/material/Box";
+import Snackbar from '@mui/material/Snackbar';
+import Alert from '@mui/material/Alert';
 function SurveyPopup(props) {
 
     const [questionArray, set_questionArray] = useState([
 
     ]);
 
+    const [emptySurveyError, set_emptySurveyError] = useState({ empty: false, message: "" });
 
     const [addQuestionClicked, set_addQuestionClicked] = useState(false);
 
@@ -59,9 +62,30 @@ function SurveyPopup(props) {
 
     function finishSurveyCreation(event) {
         event.preventDefault();
-        console.log(surveyPreferences.expireDate);
-        props.addSurvey({ ...surveyPreferences, questions: [...questionArray] })
-        props.setOpenSurveyCreation(false);
+        if (questionArray.length === 0) {
+            set_emptySurveyError({ empty: true, message: "Boş anket gönderilemez." });
+
+
+        }
+        else {
+            var emptyQuestion = false;
+            for (let index = 0; index < questionArray.length; index++) {
+                const element = questionArray[index];
+                if (element.options.length === 0) {
+                    emptyQuestion = true;
+                    break;
+                }
+            }
+            if (emptyQuestion) {
+                set_emptySurveyError({ empty: true, message: "Ankette boş soru olamaz." });
+            }
+            else {
+                props.set_snackBarOpen(true);
+                props.addSurvey({ ...surveyPreferences, questions: [...questionArray] })
+                props.setOpenSurveyCreation(false);
+            }
+        }
+
 
     }
 
@@ -196,7 +220,38 @@ function SurveyPopup(props) {
 
     }
     return <Grow in={true}>
+
         <div className="flex-container">
+            <Snackbar
+
+                autoHideDuration={4000}
+                anchorOrigin={{ vertical: "top", horizontal: "center" }}
+                open={emptySurveyError.empty}
+                onClose={(event, reason) => {
+                    if (reason === 'clickaway') {
+                        return;
+                    }
+                    set_emptySurveyError((prev) => ({ ...prev, empty: false }))
+                }
+                }
+                key={"top" + "center"}
+            >
+                <Alert
+                    color='secondary'
+                    onClose={(event, reason) => {
+                        if (reason === 'clickaway') {
+                            return;
+                        }
+                        set_emptySurveyError((prev) => ({ ...prev, empty: false }))
+                    }
+                    }
+                    severity="error"
+                    variant="filled"
+                    sx={{ width: '100%' }}
+                >
+                    {emptySurveyError.message}
+                </Alert>
+            </Snackbar>
             <Card className="">
                 <CardContent className="d-flex">
                     <div className="create-survey d-flex flex-column p-4 rounded" >
