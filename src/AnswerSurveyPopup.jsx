@@ -8,6 +8,7 @@ import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
+
 import Typography from '@mui/material/Typography';
 import AddIcon from '@mui/icons-material/Add';
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
@@ -18,8 +19,6 @@ import Switch from '@mui/material/Switch';
 import Collapsible from "react-collapsible";
 import AnswerQuestionBody from "./AnswerQuestionBody";
 import { useState } from "react";
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
 import Checkbox from '@mui/material/Checkbox';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -39,6 +38,9 @@ import Pagination from '@mui/material/Pagination';
 import Card from "@mui/material/Card";
 import CardContent from '@mui/material/CardContent';
 import { Snackbar, Alert } from "@mui/material";
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 function AnswerSurveyPopup(props) {
 
 
@@ -101,12 +103,19 @@ function AnswerSurveyPopup(props) {
 
             var allAnswers = [];
             sortedSurveys[focusedSurveyIndex].questions.forEach((question, index) => {
-                var temp = []
+                var temp = {}
+                var tempObject = {}
+                var tempArray = []
                 question.options.forEach((option, index) => {
 
-                    temp.push({ optionName: option.name, answeredAmount: option.answers.length })
+                    tempArray.push({ answeredAmount: option.answers.length, barName: option.name })
+                    // tempObject[option.name] = option.answers.length
+
+
                 })
-                allAnswers.push(temp)
+                // temp = { ...tempObject, barName: question.questionName }
+                // allAnswers.push(temp)
+                allAnswers.push(tempArray)
 
 
             })
@@ -175,7 +184,7 @@ function AnswerSurveyPopup(props) {
         }
         props.updateSurvey(modifiedSurvey, sortedSurveys[focusedSurveyIndex].index);
         set_focusSurvey(false);
-        
+
 
     }
     function handleAnsweredQuestionAmount(id, value) {
@@ -348,9 +357,19 @@ function AnswerSurveyPopup(props) {
                             </form>
                             : <div className="d-flex flex-column" style={{ flex: "1" }}>
                                 <SurveyResults page={focusedQuestion - 1} dataSet={dataSet[focusedQuestion - 1]} question={sortedSurveys[focusedSurveyIndex].questions[focusedQuestion - 1]}> </SurveyResults>
-                                <div className="d-flex mt-3 justify-content-between" >
+                                <div className="d-flex mt-3 justify-content-end align-items-center gap-3" >
+                                    <FormControl size="small">
+                                        <Select
+                                            labelId="demo-simple-select-label"
+                                            id="demo-simple-select"
+                                            value={focusedQuestion}
+                                            onChange={(event) => set_focusedQuestion(event.target.value)}
+                                        >
+                                            {sortedSurveys[focusedSurveyIndex].questions.map((question, index) => <MenuItem value={index + 1}>{question.questionName}</MenuItem>)}
+                                        </Select>
+                                    </FormControl>
                                     <Pagination showFirstButton showLastButton onChange={(event, value) => set_focusedQuestion(value)} page={focusedQuestion} count={sortedSurveys[focusedSurveyIndex].questions.length} color="primary" />
-                                    <h2 >{sortedSurveys[focusedSurveyIndex].questions[focusedQuestion - 1].questionName}</h2>
+
                                 </div>
                             </div>)}
 

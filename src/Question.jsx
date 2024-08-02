@@ -75,8 +75,8 @@ function Question(props) {
 
     }
 
-    return <Accordion style={{ border: "1px solid #12065c" }}  expanded={props.question.expanded} className='mb-2' >
-        <AccordionSummary style={{borderBottom:"1px solid #12065c"}} expandIcon={<ArrowDropDownIcon />}
+    return <Accordion slotProps={{ transition: { unmountOnExit: false } }} style={{ border: "1px solid #12065c" }} expanded={props.question.expanded} className='mb-2' >
+        <AccordionSummary style={{ borderBottom: "1px solid #12065c" }} expandIcon={<ArrowDropDownIcon />}
             aria-controls="panel2-content" onMouseOver={() => set_buttonsHovered(true)} onMouseOut={() => set_buttonsHovered(false)}
             onClick={() => {
                 props.setExpanded(props.id, !props.question.expanded)

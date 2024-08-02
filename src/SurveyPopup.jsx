@@ -67,24 +67,26 @@ function SurveyPopup(props) {
 
 
         }
+
         else {
-            var emptyQuestion = false;
+
             for (let index = 0; index < questionArray.length; index++) {
                 const element = questionArray[index];
                 if (element.options.length === 0) {
-                    emptyQuestion = true;
-                    break;
+                    set_emptySurveyError({ empty: true, message: "Ankette boş soru olamaz." });
+                    return
+                }
+                var optionNames = element.options.map(option => option.name)
+                if (new Set(optionNames).size !== optionNames.length) {
+                    set_emptySurveyError({ empty: true, message: "Ankette aynı isimde seçenekler olamaz." });
+                    return
                 }
             }
-            if (emptyQuestion) {
-                set_emptySurveyError({ empty: true, message: "Ankette boş soru olamaz." });
-            }
-            else {
 
-                props.addSurvey({ ...surveyPreferences, questions: [...questionArray] })
-                props.postSurvey({ ...surveyPreferences, questions: [...questionArray] });
-                props.setOpenSurveyCreation(false);
-            }
+
+            props.addSurvey({ ...surveyPreferences, questions: [...questionArray] })
+            props.postSurvey({ ...surveyPreferences, questions: [...questionArray] });
+            props.setOpenSurveyCreation(false);
         }
 
 

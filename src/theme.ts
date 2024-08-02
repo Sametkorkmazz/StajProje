@@ -1,3 +1,4 @@
+import { Margin, Visibility } from '@mui/icons-material';
 import { createTheme } from '@mui/material/styles';
 
 export const themeOptions = createTheme({
@@ -29,6 +30,22 @@ export const themeOptions = createTheme({
 
       },
     },
-  },
+    MuiCollapse: {
+      styleOverrides: {
+        root: {
 
-});
+          '&.MuiCollapse-root': {
+
+            visibility: "visible"
+          },
+
+        },
+
+      }
+
+    },
+    
+  },
+},
+
+);

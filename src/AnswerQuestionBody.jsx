@@ -7,7 +7,7 @@ import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import TextFormatIcon from '@mui/icons-material/TextFormat';
 import ThumbUpOffAltIcon from '@mui/icons-material/ThumbUpOffAlt';
 import AnswerQuestionOptions from './AnswerQuestionOptions';
-import { FullscreenExit } from '@mui/icons-material';
+import { FullscreenExit, Visibility } from '@mui/icons-material';
 import InputAdornment from '@mui/material/InputAdornment';
 import Checkbox from '@mui/material/Checkbox';
 import Radio from '@mui/material/Radio';
@@ -24,11 +24,10 @@ import CardContent from '@mui/material/CardContent';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Accordion from '@mui/material/Accordion';
-
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
-
 function AnswerQuestionBody(props) {
+
     const [textQuestionAnswer, set_textQuestionAnswer] = useState("");
     const [expanded, set_expanded] = useState(false)
     const choiceArray = props.question.options.map((option) => option.name)
@@ -61,13 +60,13 @@ function AnswerQuestionBody(props) {
 
     }
     function handleSingleChoice(event) {
-       
-        
-        set_checkedChoice((prev) =>  prev !== event.target.value ? event.target.value : "")
- 
-        
+
+
+        set_checkedChoice((prev) => prev !== event.target.value ? event.target.value : "")
+
+
         props.handleAnsweredQuestionAmount(props.id,
-            event.target.value !== undefined && event.target.value !== checkedChoice 
+            event.target.value !== undefined && event.target.value !== checkedChoice
         )
 
     }
@@ -143,8 +142,8 @@ function AnswerQuestionBody(props) {
     }
 
 
-    return <Accordion  style={{ border: "1px solid #12065c" }}  expanded={expanded} >
-        <AccordionSummary  style={{borderBottom:"1px solid #12065c"}}  aria-controls="panel2-content" expandIcon={<ArrowDropDownIcon />} onClick={() => set_expanded((prev) => !prev)}>
+    return <Accordion  style={{ border: "1px solid #12065c" }} expanded={expanded} >
+        <AccordionSummary style={{ borderBottom: "1px solid #12065c" }} aria-controls="panel2-content" expandIcon={<ArrowDropDownIcon />} onClick={() => set_expanded((prev) => !prev)}>
 
             <Button variant='contained' className="d-flex gap-2 justify-content-start" style={{ textTransform: "none" }} >
 

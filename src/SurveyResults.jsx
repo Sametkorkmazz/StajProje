@@ -19,8 +19,6 @@ import InsertChartIcon from '@mui/icons-material/InsertChart';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 function SurveyResults(props) {
-
-
     const [resultGraphType, set_resultGraphType] = useState("bar")
     const [resultType, set_resultType] = useState(props.question.type === "metin" ? "tablo" : "grafik")
     const [questionsAnswered, set_questionAnswered] = useState();
@@ -30,15 +28,17 @@ function SurveyResults(props) {
     useEffect(() => {
 
         set_resultType(props.question.type === "metin" ? "tablo" : "grafik")
-        for (let index = 0; index < props.dataSet.length; index++) {
-            const element = props.dataSet[index];
-            if (element.answeredAmount > 0) {
-                set_questionAnswered(true)
-                break;
+        var answered = true;
+        console.log(props.dataSet);
+
+        props.dataSet.forEach(element => {
+
+            if (element["answeredAmount"] > 0) {
+                answered = true;
+
             }
-
-        }
-
+        })
+        set_questionAnswered(answered);
         var pieTemp = []
         var tableTemp = { columns: [{ field: 'id', headerName: "Sicil" },], rows: [] }
         props.question.options.forEach((option, index) => {
@@ -101,7 +101,7 @@ function SurveyResults(props) {
         set_tableData({ ...tableTemp });
         props.dataSet.forEach((element, index) => {
 
-            pieTemp.push({ id: index, value: element.answeredAmount, label: element.optionName.length < 30 ? String.fromCharCode(65 + index) + " " + element.optionName : String.fromCharCode(65 + index) + " Uzun seçenek" })
+            pieTemp.push({ id: index, value: element.answeredAmount, label: element.barName.length < 30 ? String.fromCharCode(65 + index) + " " + element.barName : String.fromCharCode(65 + index) + " Uzun seçenek" })
         });
         set_pieData([...pieTemp])
 
@@ -111,14 +111,11 @@ function SurveyResults(props) {
     }, [props.page])
 
     const chartSetting = {
-        xAxis: [
-            {
-                label: 'Seçilme miktarı',
+        yAxis: [{
 
+            tickMinStep: 1,
+        }],
 
-
-            },
-        ],
 
         grid: { vertical: true },
     };
@@ -173,28 +170,32 @@ function SurveyResults(props) {
                 (props.question.type !== "metin" && resultType === "grafik") ? resultGraphType === "bar" ?
 
                     <BarChart
-
-                        margin={{ left: 150 }}
                         dataset={props.dataSet}
-                        yAxis={[{
-                            valueFormatter: (optionName, context) =>
-                            (context.location === 'tick'
-                                ? optionName.length > 30 ? "Uzun seçenek" : optionName : optionName)
-                            ,
-                            scaleType: 'band', dataKey: 'optionName'
-                        }]}
-                        series={[{
-                            dataKey: 'answeredAmount',
-                            label: (location) => {
-                                if (location === "tooltip") {
-                                    return `Seçilme miktarı`
-                                }
-                                return props.question.questionName
+
+                        xAxis={[
+                            {
+                                colorMap: {
+                                    type: 'ordinal',
+                                    colors: ['#ccebc5', '#a8ddb5', '#7bccc4', '#4eb3d3', '#2b8cbe', '#08589e']
+                                },
+
+                                scaleType: "band",
+                                dataKey: "barName",
+                                categoryGapRatio: 0.3,
+
+
                             }
-                        }]}
-                        layout="horizontal"
+                        ]}
+                        margin={{ left: 60, top: 100, right: 30 }}
+                        series={
+                            [{
+                                dataKey: "answeredAmount",
+                            }]
+                            // props.question.options.map(option=>({dataKey:option.name,label:option.name}))
+                        }
                         {...chartSetting}
-                        barLabel="value"
+                        barLabel={"value"}
+
 
 
 
@@ -227,6 +228,7 @@ function SurveyResults(props) {
                             },
 
                         }}
+                        sx={{ "& .MuiChartsAxis-tickLabel tspan": { fontSize: "2em" } }}
                         rows={tableData.rows}
                         columns={tableData.columns}
                         initialState={{
@@ -237,13 +239,13 @@ function SurveyResults(props) {
                             },
                         }}
                         pageSizeOptions={[5]}
-                        checkboxSelection
 
                         disableRowSelectionOnClick
 
 
                     />
-                : <h1 style={{ flex: 1 }}>Bu soruya henüz cevap verilmemiş.</h1>}
+                : <h1 style={{ flex: 1 }}>Bu soruya henüz cevap verilmemiş.</h1>
+            }
 
 
         </div>
