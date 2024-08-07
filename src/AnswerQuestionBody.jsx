@@ -37,7 +37,6 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
 
 function AnswerQuestionBody(props) {
-    console.log(props.question);
 
     const [textQuestionAnswer, set_textQuestionAnswer] = useState("");
     const [expanded, set_expanded] = useState(false)

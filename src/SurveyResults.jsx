@@ -58,7 +58,7 @@ function SurveyResults(props) {
 
     useEffect(() => {
 
-        set_resultType(props.question.type === "metin" ? "tablo" : "grafik")
+        set_resultType((prev)=> props.question.type === "metin" ? "tablo" : prev)
         var answered = true;
         console.log(props.dataSet);
 

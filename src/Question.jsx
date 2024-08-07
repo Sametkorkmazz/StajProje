@@ -294,7 +294,7 @@ function Question(props) {
                                                 onChange={(event) => {
 
                                                     set_ratingEmoji(prev => ({ selected: event.target.value === "yüz" ? 2 : prev.selected, type: event.target.value }))
-                                                    changeYıldızSayısı(5, event.target.value)
+                                                    changeYıldızSayısı(event.target.value === "yüz" ? 5 : props.question.options.length, event.target.value)
                                                 }}
                                                 label="Emoji"
                                                 value={ratingEmoji.type}
