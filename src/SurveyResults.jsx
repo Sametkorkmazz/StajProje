@@ -18,11 +18,42 @@ import PieChartIcon from '@mui/icons-material/PieChart';
 import InsertChartIcon from '@mui/icons-material/InsertChart';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied';
+import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied';
+import SentimentSatisfiedIcon from '@mui/icons-material/SentimentSatisfied';
+import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAltOutlined';
+import SentimentVerySatisfiedIcon from '@mui/icons-material/SentimentVerySatisfied';
+import StarIcon from '@mui/icons-material/Star';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+const customIcons = {
+    1: {
+        icon: <SentimentVeryDissatisfiedIcon fontSize='large' color="error" />,
+        label: 'Very Dissatisfied',
+    },
+    2: {
+        icon: <SentimentDissatisfiedIcon fontSize='large' color="error" />,
+        label: 'Dissatisfied',
+    },
+    3: {
+        icon: <SentimentSatisfiedIcon fontSize='large' color="warning" />,
+        label: 'Neutral',
+    },
+    4: {
+        icon: <SentimentSatisfiedAltIcon fontSize='large' color="success" />,
+        label: 'Satisfied',
+    },
+    5: {
+        icon: <SentimentVerySatisfiedIcon fontSize='large' color="success" />,
+        label: 'Very Satisfied',
+    },
+};
 function SurveyResults(props) {
     const [resultGraphType, set_resultGraphType] = useState("bar")
     const [resultType, set_resultType] = useState(props.question.type === "metin" ? "tablo" : "grafik")
     const [questionsAnswered, set_questionAnswered] = useState();
     const [pieData, set_pieData] = useState([]);
+    const faceValues = { 1: "Kesinlikle katılmıyorum", 2: "Katılmıyorum", 3: "Kararsızım", 4: "Katılıyorum", 5: "Kesinlikle katılıyorum" }
+    
     const [tableData, set_tableData] = useState({});
 
     useEffect(() => {
@@ -43,7 +74,7 @@ function SurveyResults(props) {
         var tableTemp = { columns: [{ field: 'id', headerName: "Sicil" },], rows: [] }
         props.question.options.forEach((option, index) => {
             tableTemp.columns.push({
-                field: option.name, headerName: option.name, flex: 1,
+                field: option.name, headerName: option.name.split(" ")[1] !== "Yüz" ? option.name : faceValues[index + 1]  , flex: 1,
 
 
                 valueGetter: (value) => {
@@ -58,7 +89,8 @@ function SurveyResults(props) {
                         return params.row[option.name]
                     }
                     if (params.row[option.name] === true) {
-                        return <CheckBoxIcon> </CheckBoxIcon>;
+                        return props.question.type !== "değerlendirme" ? <CheckBoxIcon></CheckBoxIcon> : option.name.split(" ")[1] === "Yüz" ? customIcons[index + 1].icon
+                        :option.name.split(" ")[1] === "Yıldız" ? <StarIcon fontSize="large" style={{color:"#F3AA00"}}></StarIcon> : <FavoriteIcon fontSize="large" style={{color:'#ff6d75'}}></FavoriteIcon>;
                     }
 
                     return ""

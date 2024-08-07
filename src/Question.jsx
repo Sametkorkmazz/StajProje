@@ -13,7 +13,10 @@ import Switch from '@mui/material/Switch';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
+import PropTypes from 'prop-types';
+
 import Select from '@mui/material/Select';
+import { styled } from '@mui/material/styles';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormGroup from '@mui/material/FormGroup';
 import Collapsible from 'react-collapsible';
@@ -26,12 +29,44 @@ import Accordion from '@mui/material/Accordion';
 import AccordionActions from '@mui/material/AccordionActions';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
+import Rating from '@mui/material/Rating';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied';
+import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied';
+import SentimentSatisfiedIcon from '@mui/icons-material/SentimentSatisfied';
+import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAltOutlined';
+import SentimentVerySatisfiedIcon from '@mui/icons-material/SentimentVerySatisfied';
+import StarIcon from '@mui/icons-material/Star';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import { Box } from '@mui/material';
 function Question(props) {
+    const customIcons = {
+        1: {
+            icon: <SentimentVeryDissatisfiedIcon fontSize='inherit' color="error" />,
+            label: 'Very Dissatisfied',
+        },
+        2: {
+            icon: <SentimentDissatisfiedIcon fontSize='inherit' color="error" />,
+            label: 'Dissatisfied',
+        },
+        3: {
+            icon: <SentimentSatisfiedIcon fontSize='inherit' color="warning" />,
+            label: 'Neutral',
+        },
+        4: {
+            icon: <SentimentSatisfiedAltIcon fontSize='inherit' color="success" />,
+            label: 'Satisfied',
+        },
+        5: {
+            icon: <SentimentVerySatisfiedIcon fontSize='inherit' color="success" />,
+            label: 'Very Satisfied',
+        },
+    };
 
-
+    const [faceText, set_faceText] = useState(3);
     const [buttonsHovered, set_buttonsHovered] = useState(false);
-
+    const [faceTextHover, set_faceTextHover] = useState(-1);
     function changeOptionsOrder(id, direction) {
         var option = props.question.options[id];
         var newIndex = id + direction;
@@ -42,7 +77,8 @@ function Question(props) {
 
 
     }
-
+    const faceValues = { 1: "Kesinlikle katılmıyorum", 2: "Katılmıyorum", 3: "Kararsızım", 4: "Katılıyorum", 5: "Kesinlikle katılıyorum" }
+    const [ratingEmoji, set_ratingEmoji] = useState({ type: "yıldız", selected: 2 })
 
 
     function addOption() {
@@ -67,14 +103,29 @@ function Question(props) {
     }
 
 
-    function changeYıldızSayısı(value) {
+    function changeYıldızSayısı(value, type) {
         var newOptions = Array.from({ length: value }, (_, index) => {
-            return { name: index + 1 + " Yıldız", answers: [] };
+            return { name: (index + 1) + (type === "yıldız" ? " Yıldız" : type === "kalp" ? " Kalp" : " Yüz"), answers: [] };
         });
         props.changeOptionsOrder(props.id, newOptions)
 
     }
+    function IconContainer(props) {
+        const { value, ...other } = props;
+        return <span {...other}>{customIcons[value].icon}</span>;
+    }
 
+    IconContainer.propTypes = {
+        value: PropTypes.number.isRequired,
+    };
+    function getLabelText(value) {
+        return `${value} Star${value !== 1 ? 's' : ''}, ${labels[value]}`;
+    }
+    const StyledRating = styled(Rating)(({ theme }) => ({
+        '& .MuiRating-iconEmpty .MuiSvgIcon-root': {
+            color: theme.palette.action.disabled,
+        },
+    }));
     return <Accordion slotProps={{ transition: { unmountOnExit: false } }} style={{ border: "1px solid #12065c" }} expanded={props.question.expanded} className='mb-2' >
         <AccordionSummary style={{ borderBottom: "1px solid #12065c" }} expandIcon={<ArrowDropDownIcon />}
             aria-controls="panel2-content" onMouseOver={() => set_buttonsHovered(true)} onMouseOut={() => set_buttonsHovered(false)}
@@ -84,7 +135,7 @@ function Question(props) {
             }}
         >
 
-            <div className='d-flex gap-1' >
+            <div className='d-flex gap-1 col' >
                 <Button variant='contained' className="gap-2 justify-content-start" style={{ textTransform: "none" }}
                 >
 
@@ -92,12 +143,12 @@ function Question(props) {
                     {props.question.type === "seçenek" ? <RadioButtonCheckedIcon></RadioButtonCheckedIcon> : props.question.type === "metin" ? <TextFormatIcon></TextFormatIcon> : <ThumbUpOffAltIcon></ThumbUpOffAltIcon>}
                 </Button>
                 {buttonsHovered &&
-                    <div className="d-flex">
+                    <div className="ms-auto me-4 d-flex">
                         <Button onClick={(e) => {
                             e.stopPropagation();
                             props.deleteQuestion(props.id)
                         }}>
-                            <DeleteOutlineIcon></DeleteOutlineIcon>
+                            <DeleteOutlineIcon fontSize='small'></DeleteOutlineIcon>
                         </Button>
 
                         <Button onClick={(e) => {
@@ -105,7 +156,7 @@ function Question(props) {
 
                             props.changeOrder(props.id, -1)
                         }}>
-                            <ArrowUpwardIcon></ArrowUpwardIcon>
+                            <ArrowUpwardIcon fontSize='small'></ArrowUpwardIcon>
                         </Button>
 
                         <Button onClick={(e) => {
@@ -114,7 +165,7 @@ function Question(props) {
                             props.changeOrder(props.id, 1)
                         }}>
 
-                            <ArrowDownwardIcon></ArrowDownwardIcon>
+                            <ArrowDownwardIcon fontSize='small'></ArrowDownwardIcon>
                         </Button>
                     </div>
                 }
@@ -164,7 +215,41 @@ function Question(props) {
 
                         </div>
                         <div className={'d-flex' + (props.question.type === "seçenek" ? " flex-column gap-3" : props.question.type === "değerlendirme" ? " gap-4 mt-2 ms-3" : "")}>
-                            {props.question.options.map((option, index) => <QuestionOptions deleteOption={deleteOption} changeOptionName={changeOptionName} multiChoice={props.question.multiChoice} parentId={props.id} changeOptionOrder={changeOptionsOrder} key={index} id={index} name={option.name} type={props.question.type}></QuestionOptions>)}
+                            {props.question.type !== "değerlendirme" ? props.question.options.map((option, index) => <QuestionOptions deleteOption={deleteOption} changeOptionName={changeOptionName} multiChoice={props.question.multiChoice} parentId={props.id} changeOptionOrder={changeOptionsOrder} key={index} id={index} name={option.name} type={props.question.type}></QuestionOptions>) :
+                                ratingEmoji.type !== "yüz" ?
+                                    <Rating
+
+                                        name="değerlendirme-emoji"
+                                        value={ratingEmoji.selected}
+                                        max={props.question.options.length}
+                                        onChange={(event, newValue) => {
+                                            set_ratingEmoji((prev) => ({ ...prev, selected: newValue }));
+                                        }}
+                                        sx={ratingEmoji.type === "kalp" && {
+                                            '& .MuiRating-iconFilled': {
+                                                color: '#ff6d75',
+                                            },
+                                            '& .MuiRating-iconHover': {
+                                                color: '#ff3d47',
+                                            },
+                                        }}
+                                        icon={ratingEmoji.type === "yıldız" ? <StarIcon fontSize='inherit'></StarIcon> : <FavoriteIcon fontSize='inherit' />}
+                                        emptyIcon={ratingEmoji.type === "yıldız" ? <StarIcon fontSize='inherit'></StarIcon> : <FavoriteBorderIcon fontSize='inherit'></FavoriteBorderIcon>}
+                                        size='large'
+                                    /> : <div className='d-flex gap-4 '>
+                                        <StyledRating
+                                            size='large'
+                                            name="highlight-selected-only"
+                                            IconContainerComponent={IconContainer}
+                                            highlightSelectedOnly
+                                            value={faceText}
+                                            onChange={(event, value) => set_faceText(value)}
+                                            onChangeActive={(event, newHover) => {
+                                                set_faceTextHover(newHover);
+                                            }}
+                                        />
+                                        <p>{faceText > 0 && faceValues[faceTextHover !== -1 ? faceTextHover : faceText]}</p>
+                                    </div>}
                         </div>
 
                         <div className="d-flex mt-3 justify-content-between">
@@ -174,32 +259,59 @@ function Question(props) {
                                 <Button onClick={addOption} variant="text"><AddCircleOutlineIcon className='me-1'></AddCircleOutlineIcon>Yeni Seçenek</Button>
 
                                 : props.question.type === "değerlendirme" ?
-                                    <FormControl style={{ flex: "0.2" }} className='ms-3 mt-3'>
-                                        <InputLabel id="demo-simple-select-label">Yıldız Sayısı</InputLabel>
-                                        <Select
-                                            labelId="demo-simple-select-label"
-                                            id="demo-simple-select"
-                                            onChange={(event) => changeYıldızSayısı(event.target.value)}
-                                            label="Yıldız Sayısı"
-                                            value={props.question.options.length}
+                                    <div className="d-flex" style={{ flex: "1" }}>
+                                        <FormControl style={{ flex: "0.2" }} className='ms-3 mt-3'>
+                                            <InputLabel id="demo-simple-select-label">En fazla</InputLabel>
+                                            <Select
+                                                labelId="demo-simple-select-label"
+                                                id="demo-simple-select"
+                                                onChange={(event) => changeYıldızSayısı(event.target.value, ratingEmoji.type)}
+                                                label="En fazla"
+                                                value={props.question.options.length}
+                                                disabled={ratingEmoji.type === "yüz"}
 
-                                        >
-                                            <MenuItem value={1}>1</MenuItem>
+                                            >
+                                                <MenuItem value={1}>1</MenuItem>
 
-                                            <MenuItem value={2}>2</MenuItem>
-                                            <MenuItem value={3}>3</MenuItem>
-                                            <MenuItem value={4}>4</MenuItem>
-                                            <MenuItem value={5}>5</MenuItem>
-                                            <MenuItem value={6}>6</MenuItem>
-                                            <MenuItem value={7}>7</MenuItem>
-                                            <MenuItem value={8}>8</MenuItem>
-                                            <MenuItem value={9}>9</MenuItem>
-                                            <MenuItem value={10}>10</MenuItem>
+                                                <MenuItem value={2}>2</MenuItem>
+                                                <MenuItem value={3}>3</MenuItem>
+                                                <MenuItem value={4}>4</MenuItem>
+                                                <MenuItem value={5}>5</MenuItem>
 
+                                                {ratingEmoji.type !== "yüz" && Array.from({ length: 5 }, (_, index) => {
+                                                    return <MenuItem value={index + 6}>{index + 6}</MenuItem>
+                                                })}
 
 
-                                        </Select>
-                                    </FormControl>
+
+                                            </Select>
+                                        </FormControl>
+                                        <FormControl className='ms-3 mt-3'>
+                                            <InputLabel id="demo-simple-select-label">Emoji</InputLabel>
+                                            <Select
+                                                labelId="demo-simple-select-label"
+                                                id="demo-simple-select"
+                                                onChange={(event) => {
+
+                                                    set_ratingEmoji(prev => ({ selected: event.target.value === "yüz" ? 2 : prev.selected, type: event.target.value }))
+                                                    changeYıldızSayısı(5, event.target.value)
+                                                }}
+                                                label="Emoji"
+                                                value={ratingEmoji.type}
+
+                                            >
+                                                <MenuItem value={"yıldız"}>Yıldız</MenuItem>
+                                                <MenuItem value={"kalp"}>Kalp</MenuItem>
+                                                <MenuItem value={"yüz"}>Yüz</MenuItem>
+
+
+
+
+
+                                            </Select>
+                                        </FormControl>
+
+                                    </div>
                                     : <div></div>
                             }
 

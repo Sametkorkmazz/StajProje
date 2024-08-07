@@ -98,6 +98,8 @@ function AnswerSurveyPopup(props) {
     const [focusSurvey, set_focusSurvey] = useState(false);
     const [finishSurveyDialog, set_finishSurveyDialog] = useState(false);
     const [dataSet, set_dataSet] = useState([]);
+    const faceValues = { 1: "Kesinlikle katılmıyorum", 2: "Katılmıyorum", 3: "Kararsızım", 4: "Katılıyorum", 5: "Kesinlikle katılıyorum" }
+
     function createResultGraphs() {
         if (sortedSurveys.length !== 0) {
 
@@ -108,7 +110,7 @@ function AnswerSurveyPopup(props) {
                 var tempArray = []
                 question.options.forEach((option, index) => {
 
-                    tempArray.push({ answeredAmount: option.answers.length, barName: option.name })
+                    tempArray.push({ answeredAmount: option.answers.length, barName: option.name.split(" ")[1] !== "Yüz" ? option.name :  faceValues[index + 1]})
                     // tempObject[option.name] = option.answers.length
 
 
@@ -157,6 +159,8 @@ function AnswerSurveyPopup(props) {
 
     function sendAnswers() {
         var formData = $('#answer-survey-form').serializeArray();
+        console.log(formData);
+
         var modifiedSurvey = sortedSurveys[focusedSurveyIndex];
         for (let index = 0; index < formData.length - 1; index++) {
             var values = formData[index].name.split(" ");
@@ -167,7 +171,9 @@ function AnswerSurveyPopup(props) {
                 if (modifiedQuestion.type === "metin") {
                     return true;
                 }
-
+                else if (modifiedQuestion.type === "değerlendirme") {
+                    return item.name.split(" ")[0] === answer
+                }
                 return item.name === answer
 
             })
@@ -194,6 +200,8 @@ function AnswerSurveyPopup(props) {
 
 
     }
+
+
     return <Grow in={true} >
 
         <div className="flex-container" >
@@ -255,7 +263,7 @@ function AnswerSurveyPopup(props) {
                                 Geri
                             </Button>
                             <Typography style={{ fontWeight: "200" }} variant="h6" gutterBottom>
-                                {new Date() < new Date(sortedSurveys[focusedSurveyIndex].expireDate) ? `Anketin bitmesine son ${calculateRemainingDays(sortedSurveys[focusedSurveyIndex].expireDate) + 1} gün.` : "Anket bitmiştir."}
+                                {new Date() < new Date(sortedSurveys[focusedSurveyIndex].expireDate) ? `Anketin bitmesine son ${calculateRemainingDays(sortedSurveys[focusedSurveyIndex].expireDate) + 1} gün` : "Anket bitmiştir"}
 
                             </Typography>
                         </div>}
@@ -275,11 +283,11 @@ function AnswerSurveyPopup(props) {
                                     <Button onClick={() => handleFocus(index)} variant='outlined' style={{
                                         textTransform: "none", flex: "1"
                                     }}
-                                        color={remaningDays > 0 ? "primary" : "secondary"}
+                                        color={remaningDays < 0 ? "primary" : "secondary"}
 
                                         disableElevation className='align-items-start gap-1  d-flex flex-column' >
-                                        <Typography style={{ fontWeight: "200" }} className="col-12 text-end" variant="h5" gutterBottom>
-                                            {remaningDays > 0 ? `Anketin bitmesine son ${remaningDays + 1} gün.` : "Anket bitmiştir."}
+                                        <Typography style={{ fontWeight: "200" }} className="col-12 text-end" variant="h6" gutterBottom>
+                                            {remaningDays > 0 ? `Anketin bitmesine son ${remaningDays + 1} gün` : "Anket bitmiştir"}
                                         </Typography>
                                         <Typography style={{ fontWeight: "200" }} variant="h4" gutterBottom>
                                             {survey.surveyTitle}

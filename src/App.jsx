@@ -135,7 +135,6 @@ function App() {
         </div>
 
 
-
         {buttonClicked &&
           <div className="d-flex justify-content-end">
             <SurveyMenu set_OpenSurveyAnswer={set_OpenSurveyAnswer} set_OpenSurveyCreation={set_OpenSurveyCreation}></SurveyMenu>

@@ -34,10 +34,10 @@ function SurveyPopup(props) {
 
     const currentDate = new Date();
     currentDate.setDate(currentDate.getDate() + 1)
-    const minDate = currentDate.toISOString().split("T")[0]
+    const minDate = currentDate.toISOString().split("T")[0] + "T00:00"
     var maxAllowedDate = new Date();
     maxAllowedDate.setMonth(maxAllowedDate.getMonth() + 3)
-    const maxDate = maxAllowedDate.toISOString().split("T")[0]
+    const maxDate = maxAllowedDate.toISOString().split("T")[0] + "T00:00"
 
 
 
@@ -46,19 +46,11 @@ function SurveyPopup(props) {
         surveyText: "",
         anonimAnswer: false,
         anonimResult: false,
-        expireDate: "",
+        expireDate: currentDate.toISOString().split("T")[0] + "T23:59",
         ownerId: ""
     })
 
-    function handleDate() {
-        var enteredDateString = surveyPreferences.expireDate.split("-");
 
-        var currentDate = new Date();
-        var enteredDate = new Date(enteredDateString[0], parseInt(enteredDateString[1]) - 1, enteredDateString[2])
-        var validDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 4, currentDate.getDate())
-        return enteredDate > validDate || enteredDate <= currentDate;
-
-    }
 
     function finishSurveyCreation(event) {
         event.preventDefault();
@@ -69,6 +61,7 @@ function SurveyPopup(props) {
         }
 
         else {
+            console.log(surveyPreferences);
 
             for (let index = 0; index < questionArray.length; index++) {
                 const element = questionArray[index];
@@ -259,7 +252,7 @@ function SurveyPopup(props) {
 
     return <Grow in={true}>
 
-        <div className="flex-container">
+        <div className="flex-container" style={{zIndex:"1"}}>
             {emptySurveyError.empty && answerCreationFeedback(emptySurveyError.message, "error", "secondary")}
 
             <Card className="">
@@ -363,9 +356,8 @@ function SurveyPopup(props) {
                                         onInvalid={(event) => event.target.setCustomValidity("Lütfen izin verilen aralıkta bir tarih giriniz.")}
                                         onChange={(event) => {
                                             handleSurveyPreferences(event)
-                                            event.target.setCustomValidity(handleDate() ? "Lütfen izin verilen aralıkta bir tarih giriniz." : "")
 
-                                        }} type="date" id="expire-date" name="expireDate" />
+                                        }} type="datetime-local" id="expire-date" name="expireDate" />
                                     <form id="create-survey-form" onSubmit={(event) => finishSurveyCreation(event)}>
                                         <TextField onInvalid={(event) => event.target.setCustomValidity("Sicilinizi giriniz")} style={{ flex: "1", minWidth: "70px" }} className="pe-2" id="outlined-basic" name="ownerId" required label="Sicil *" variant="outlined" size="small" value={surveyPreferences.ownerId}
                                             onChange={(event) => {

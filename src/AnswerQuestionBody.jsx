@@ -13,10 +13,11 @@ import Checkbox from '@mui/material/Checkbox';
 import Radio from '@mui/material/Radio';
 import FormLabel from '@mui/material/FormLabel';
 import EditNoteIcon from '@mui/icons-material/EditNote';
-import StarIcon from '@mui/icons-material/Star';
-import StarBorderIcon from '@mui/icons-material/StarBorder';
 import Star from '@mui/icons-material/Star'
 import Rating from '@mui/material/Rating';
+import PropTypes from 'prop-types';
+import { styled } from '@mui/material/styles';
+
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -25,8 +26,18 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Accordion from '@mui/material/Accordion';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied';
+import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied';
+import SentimentSatisfiedIcon from '@mui/icons-material/SentimentSatisfied';
+import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAltOutlined';
+import SentimentVerySatisfiedIcon from '@mui/icons-material/SentimentVerySatisfied';
+import StarIcon from '@mui/icons-material/Star';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+
 
 function AnswerQuestionBody(props) {
+    console.log(props.question);
 
     const [textQuestionAnswer, set_textQuestionAnswer] = useState("");
     const [expanded, set_expanded] = useState(false)
@@ -38,6 +49,48 @@ function AnswerQuestionBody(props) {
     for (let index = 0; index < choiceArray.length; index++) {
         choiceArray[index] = checkedChoices[choiceArray[index]];
     }
+
+    const customIcons = {
+        1: {
+            icon: <SentimentVeryDissatisfiedIcon fontSize='inherit' color="error" />,
+            label: 'Very Dissatisfied',
+        },
+        2: {
+            icon: <SentimentDissatisfiedIcon fontSize='inherit' color="error" />,
+            label: 'Dissatisfied',
+        },
+        3: {
+            icon: <SentimentSatisfiedIcon fontSize='inherit' color="warning" />,
+            label: 'Neutral',
+        },
+        4: {
+            icon: <SentimentSatisfiedAltIcon fontSize='inherit' color="success" />,
+            label: 'Satisfied',
+        },
+        5: {
+            icon: <SentimentVerySatisfiedIcon fontSize='inherit' color="success" />,
+            label: 'Very Satisfied',
+        },
+    };
+    function IconContainer(props) {
+        const { value, ...other } = props;
+        return <span {...other}>{customIcons[value].icon}</span>;
+    }
+
+    IconContainer.propTypes = {
+        value: PropTypes.number.isRequired,
+    };
+
+    const StyledRating = styled(Rating)(({ theme }) => ({
+        '& .MuiRating-iconEmpty .MuiSvgIcon-root': {
+            color: theme.palette.action.disabled,
+        },
+    }));
+    const faceValues = { 1: "Kesinlikle katılmıyorum", 2: "Katılmıyorum", 3: "Kararsızım", 4: "Katılıyorum", 5: "Kesinlikle katılıyorum" }
+    const [faceText, set_faceText] = useState(3);
+    const [faceTextHover, set_faceTextHover] = useState(-1);
+
+
     function handleMultiChange(event, name) {
 
         var temp = {
@@ -142,7 +195,7 @@ function AnswerQuestionBody(props) {
     }
 
 
-    return <Accordion  style={{ border: "1px solid #12065c" }} expanded={expanded} >
+    return <Accordion style={{ border: "1px solid #12065c" }} expanded={expanded} >
         <AccordionSummary style={{ borderBottom: "1px solid #12065c" }} aria-controls="panel2-content" expandIcon={<ArrowDropDownIcon />} onClick={() => set_expanded((prev) => !prev)}>
 
             <Button variant='contained' className="d-flex gap-2 justify-content-start" style={{ textTransform: "none" }} >
@@ -192,33 +245,84 @@ function AnswerQuestionBody(props) {
                                 </TextField>
                                 : <div className='d-flex justiffy-content-center gap-1'>
 
-                                    {props.question.options[0].name.split(" ")[1] === "Yıldız" ?
-                                        <FormControl>
-
-                                            <RadioGroup
-                                                className='align-items-center'
-                                                row
-                                                aria-labelledby="demo-row-radio-buttons-group-label"
+                                    {props.question.options[0].name.split(" ")[1] !== "Yüz" ?
+                                        <div className="d-flex gap-4">
+                                            <Rating
+                                                size='large'
+                                                icon={props.question.options[0].name.split(" ")[1] === "Yıldız" ? <StarIcon fontSize='inherit'></StarIcon> : <FavoriteIcon fontSize='inherit' />}
+                                                emptyIcon={props.question.options[0].name.split(" ")[1] === "Yıldız" ? <StarIcon fontSize='inherit'></StarIcon> : <FavoriteBorderIcon fontSize='inherit'></FavoriteBorderIcon>}
                                                 name={props.id + " " + props.question.questionName}
                                                 value={checkedChoice}
-                                                onClick={(event) => handleSingleChoice(event)}
-                                            >
-                                                {props.question.options.map((option, index) => <FormControlLabel key={index} value={option.name} control={<Radio value={option.name} required={props.question.required} sx={{
-                                                    '& .MuiSvgIcon-root': {
-                                                        fontSize: "40px",
+                                                max={props.question.options.length}
+                                                onChange={(event) => {
+
+                                                    handleSingleChoice(event);
+                                                    set_faceText(event.target.value)
+                                                    console.log(checkedChoice);
+
+                                                }}
+                                                onChangeActive={(event, newHover) => {
+
+                                                    set_faceTextHover(newHover);
+                                                }}
+                                                sx={props.question.options[0].name.split(" ")[1] === "Kalp" && {
+                                                    '& .MuiRating-iconFilled': {
+                                                        color: '#ff6d75',
                                                     },
-                                                    "& .MuiFormLabel-asterisk": {
-                                                        color: "red"
-                                                    }
-                                                }} checkedIcon={<Star  ></Star>} icon={parseInt(option.name.split(" ")[0]) < parseInt(checkedChoice === undefined ? 0 : checkedChoice.split(" ")[0]) ? <Star color="primary"></Star> : <StarBorderIcon ></StarBorderIcon>} />} />)}
-                                                <Box >{checkedChoice === undefined ? "" : checkedChoice.split(" ")[0]}</Box>
-                                            </RadioGroup>
+                                                    '& .MuiRating-iconHover': {
+                                                        color: '#ff3d47',
+                                                    },
+                                                }}
+                                            />
+
+                                            <p>{checkedChoice !== "" && (faceTextHover !== -1 ? faceTextHover : faceText)}</p>
+
+                                        </div>
+
+                                        // <FormControl>
+
+                                        //     <RadioGroup
+                                        //         className='align-items-center'
+                                        //         row
+                                        //         aria-labelledby="demo-row-radio-buttons-group-label"
+                                        //         name={props.id + " " + props.question.questionName}
+                                        //         value={checkedChoice}
+                                        //         onClick={(event) => handleSingleChoice(event)}
+                                        //     >
+                                        //         {props.question.options.map((option, index) => <FormControlLabel key={index} value={option.name} control={<Radio value={option.name} required={props.question.required} sx={{
+                                        //             '& .MuiSvgIcon-root': {
+                                        //                 fontSize: "40px",
+                                        //             },
+                                        //             "& .MuiFormLabel-asterisk": {
+                                        //                 color: "red"
+                                        //             }
+                                        //         }} checkedIcon={<Star  ></Star>} icon={parseInt(option.name.split(" ")[0]) < parseInt(checkedChoice === undefined ? 0 : checkedChoice.split(" ")[0]) ? <Star color="primary"></Star> : <StarBorderIcon ></StarBorderIcon>} />} />)}
+                                        //         <Box >{checkedChoice === undefined ? "" : checkedChoice.split(" ")[0]}</Box>
+                                        //     </RadioGroup>
 
 
-                                        </FormControl>
+                                        // </FormControl>
 
 
-                                        : null}
+                                        : <div className='d-flex gap-4 '>
+                                            <StyledRating
+
+                                                size='large'
+                                                name={props.id}
+                                                IconContainerComponent={IconContainer}
+                                                highlightSelectedOnly
+                                                value={checkedChoice}
+                                                onChange={(event, value) => {
+                                                    set_faceText(value)
+                                                    handleSingleChoice(event)
+                                                }}
+                                                onChangeActive={(event, newHover) => {
+
+                                                    set_faceTextHover(newHover);
+                                                }}
+                                            />
+                                            <p>{checkedChoice !== "" && faceValues[faceTextHover !== -1 ? faceTextHover : faceText]}</p>
+                                        </div>}
                                 </div>
 
                         }
