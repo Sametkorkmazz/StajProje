@@ -251,140 +251,144 @@ function SurveyPopup(props) {
 
 
     return <Grow in={true}>
+        <div>
+            <svg style={{left:"0px",top:"0px", position: "absolute" }} xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" fill="none">
+                <path d="M-22 -13H1923V1081H-22V-13Z" fill="#1C1B1B" fill-opacity="0.5" />
+            </svg>
+            <div className="flex-container" style={{ zIndex: "1" }}>
+                {emptySurveyError.empty && answerCreationFeedback(emptySurveyError.message, "error", "secondary")}
 
-        <div className="flex-container" style={{zIndex:"1"}}>
-            {emptySurveyError.empty && answerCreationFeedback(emptySurveyError.message, "error", "secondary")}
+                <Card className="">
+                    <CardContent className="d-flex">
+                        <div className="create-survey d-flex flex-column p-4 rounded" >
+                            <div className="d-flex justify-content-end" >
 
-            <Card className="">
-                <CardContent className="d-flex">
-                    <div className="create-survey d-flex flex-column p-4 rounded" >
-                        <div className="d-flex justify-content-end" >
+                                <Button style={{ position: "relative", bottom: "10px", left: "10px" }} onClick={() => props.setOpenSurveyCreation(false)} className="justify-content-center">
 
-                            <Button style={{ position: "relative", bottom: "10px", left: "10px" }} onClick={() => props.setOpenSurveyCreation(false)} className="justify-content-center">
-
-                                <CloseIcon ></CloseIcon>
-                            </Button>
-
-                        </div>
-                        <div className="row" style={{}}>
-
-                            <div className="col">
-                                <Typography variant="h3" gutterBottom>
-                                    Yeni Anket
-                                </Typography>
-                            </div>
-
-
-                        </div>
-                        <div className="row py-2">
-                            <div className="col-6">
-
-                                <TextField
-                                    required
-                                    style={{ fontSize: "1.2rem" }}
-                                    id="surveyTitle"
-                                    name="surveyTitle"
-                                    label="Başlığı buraya giriniz *"
-                                    variant="outlined" size="small" fullWidth
-                                    value={surveyPreferences.surveyTitle}
-                                    onChange={(event) => {
-                                        event.target.setCustomValidity(event.target.value.trim().length === 0 ? "Bir başlık girin" : "");
-                                        handleSurveyPreferences(event);
-                                    }}
-                                    InputLabelProps={{
-                                        shrink: true,
-
-
-                                    }}
-                                    onInvalid={(event) => event.target.setCustomValidity("Bir başlık girin.")}
-                                    inputProps={{
-                                        form: "create-survey-form",
-
-
-                                    }}
-                                ></TextField>
+                                    <CloseIcon ></CloseIcon>
+                                </Button>
 
                             </div>
-                            <div className="col">
-                                <TextField
-                                    style={{ fontSize: "3rem" }}
+                            <div className="row" style={{}}>
 
-                                    id="standard"
-                                    name="surveyText"
-                                    label="Anket açıklamasını buraya girebilirsiniz"
-                                    value={surveyPreferences.surveyText}
-                                    onChange={(event) => handleSurveyPreferences(event)}
-                                    variant="outlined" size="small" fullWidth InputLabelProps={{
-                                        shrink: true,
-                                        required: false,
-                                    }} >
+                                <div className="col">
+                                    <Typography variant="h3" gutterBottom>
+                                        Yeni Anket
+                                    </Typography>
+                                </div>
 
-
-                                </TextField>
-                            </div>
-                        </div>
-                        <div className="row pb-2 mt-1" id="questions-body" style={{ flex: "1", overflowY: "auto", }}>
-
-                            <div className="col-12">
-                                {questionArray.map((soru, index) =>
-                                    <Question
-
-                                        setExpanded={setExpanded} setRequired={setRequired} setMultiChoice={setMultiChoice} changeAnswerLimit={changeAnswerLimit} changeOptionsOrder={changeOptionsOrder} deleteQuestion={deleteQuestion} changeOrder={changeOrder} changeQuestionName={changeQuestionName} question={soru} key={index} id={index}></Question>)}
 
                             </div>
+                            <div className="row py-2">
+                                <div className="col-6">
 
-                        </div>
-                        <div className="d-flex flex-column">
-                            {!addQuestionClicked ?
-                                <div className="col-12 mt-2 d-flex mb-auto" >
-                                    <Button colorpalette={"red"} onClick={() => set_addQuestionClicked((prev) => !prev)} variant="contained" style={{ height: "2.7rem", textTransform: "none" }}>
-                                        <AddIcon></AddIcon> Yeni soru</Button></div>
-                                : <div className="col d-flex">  <QuestionType set_soruArray={newQuestion} setSoruEkle={set_addQuestionClicked} /> </div>}
-                            <div className="row mt-4 d-flex flex-column justify-content-between">
-
-
-
-
-                                <div className="col-12 mt-2 d-flex gap-3 flex-wrap">
-                                    <FormControlLabel style={{ flex: "0.9" }} control={<Switch size="small" name="anonimAnswer" value={surveyPreferences.anonimAnswer} onClick={(event) => handleSurveyPreferences(event)} />} label="Anonim sonuçlar" />
-
-                                    <FormControlLabel style={{ flex: "0.8" }} control={<Switch size="small" name="anonimResult" value={surveyPreferences.anonimResult} onClick={(event) => handleSurveyPreferences(event)} />} label="Anonim cevap" />
-                                    <label className="align-self-center" htmlFor="expire-date">Bitiş tarihi:</label>
-
-                                    <input form="create-survey-form" min={minDate} max={maxDate} required className="rounded"
-                                        style={{ color: "#12065c", border: "1px solid gray", flex: "1", }} value={surveyPreferences.expireDate}
-                                        onInvalid={(event) => event.target.setCustomValidity("Lütfen izin verilen aralıkta bir tarih giriniz.")}
+                                    <TextField
+                                        required
+                                        style={{ fontSize: "1.2rem" }}
+                                        id="surveyTitle"
+                                        name="surveyTitle"
+                                        label="Başlığı buraya giriniz *"
+                                        variant="outlined" size="small" fullWidth
+                                        value={surveyPreferences.surveyTitle}
                                         onChange={(event) => {
-                                            handleSurveyPreferences(event)
-
-                                        }} type="datetime-local" id="expire-date" name="expireDate" />
-                                    <form id="create-survey-form" onSubmit={(event) => finishSurveyCreation(event)}>
-                                        <TextField onInvalid={(event) => event.target.setCustomValidity("Sicilinizi giriniz")} style={{ flex: "1", minWidth: "70px" }} className="pe-2" id="outlined-basic" name="ownerId" required label="Sicil *" variant="outlined" size="small" value={surveyPreferences.ownerId}
-                                            onChange={(event) => {
-                                                event.target.setCustomValidity(event.target.value.trim().length === 0 ? "Sicilinizi giriniz" : "")
-                                                handleSurveyPreferences(event)
-                                            }} />
+                                            event.target.setCustomValidity(event.target.value.trim().length === 0 ? "Bir başlık girin" : "");
+                                            handleSurveyPreferences(event);
+                                        }}
+                                        InputLabelProps={{
+                                            shrink: true,
 
 
-                                    </form>
-                                    <Button type="submit" form="create-survey-form" className="rounded-pill" variant="contained" style={{ height: "2.7rem", flex: "0.7", textTransform: "none" }}>
-                                        Anketi Bitir
-                                    </Button>
+                                        }}
+                                        onInvalid={(event) => event.target.setCustomValidity("Bir başlık girin.")}
+                                        inputProps={{
+                                            form: "create-survey-form",
+
+
+                                        }}
+                                    ></TextField>
+
+                                </div>
+                                <div className="col">
+                                    <TextField
+                                        style={{ fontSize: "3rem" }}
+
+                                        id="standard"
+                                        name="surveyText"
+                                        label="Anket açıklamasını buraya girebilirsiniz"
+                                        value={surveyPreferences.surveyText}
+                                        onChange={(event) => handleSurveyPreferences(event)}
+                                        variant="outlined" size="small" fullWidth InputLabelProps={{
+                                            shrink: true,
+                                            required: false,
+                                        }} >
+
+
+                                    </TextField>
                                 </div>
                             </div>
+                            <div className="row pb-2 mt-1" id="questions-body" style={{ flex: "1", overflowY: "auto", }}>
+
+                                <div className="col-12">
+                                    {questionArray.map((soru, index) =>
+                                        <Question
+
+                                            setExpanded={setExpanded} setRequired={setRequired} setMultiChoice={setMultiChoice} changeAnswerLimit={changeAnswerLimit} changeOptionsOrder={changeOptionsOrder} deleteQuestion={deleteQuestion} changeOrder={changeOrder} changeQuestionName={changeQuestionName} question={soru} key={index} id={index}></Question>)}
+
+                                </div>
+
+                            </div>
+                            <div className="d-flex flex-column">
+                                {!addQuestionClicked ?
+                                    <div className="col-12 mt-2 d-flex mb-auto" >
+                                        <Button colorpalette={"red"} onClick={() => set_addQuestionClicked((prev) => !prev)} variant="contained" style={{ height: "2.7rem", textTransform: "none" }}>
+                                            <AddIcon></AddIcon> Yeni soru</Button></div>
+                                    : <div className="col d-flex">  <QuestionType set_soruArray={newQuestion} setSoruEkle={set_addQuestionClicked} /> </div>}
+                                <div className="row mt-4 d-flex flex-column justify-content-between">
 
 
+
+
+                                    <div className="col-12 mt-2 d-flex gap-3 flex-wrap">
+                                        <FormControlLabel style={{ flex: "0.9" }} control={<Switch size="small" name="anonimAnswer" value={surveyPreferences.anonimAnswer} onClick={(event) => handleSurveyPreferences(event)} />} label="Anonim sonuçlar" />
+
+                                        <FormControlLabel style={{ flex: "0.8" }} control={<Switch size="small" name="anonimResult" value={surveyPreferences.anonimResult} onClick={(event) => handleSurveyPreferences(event)} />} label="Anonim cevap" />
+                                        <label className="align-self-center" htmlFor="expire-date">Bitiş tarihi:</label>
+
+                                        <input form="create-survey-form" min={minDate} max={maxDate} required className="rounded"
+                                            style={{ color: "#12065c", border: "1px solid gray", flex: "1", }} value={surveyPreferences.expireDate}
+                                            onInvalid={(event) => event.target.setCustomValidity("Lütfen izin verilen aralıkta bir tarih giriniz.")}
+                                            onChange={(event) => {
+                                                handleSurveyPreferences(event)
+
+                                            }} type="datetime-local" id="expire-date" name="expireDate" />
+                                        <form id="create-survey-form" onSubmit={(event) => finishSurveyCreation(event)}>
+                                            <TextField onInvalid={(event) => event.target.setCustomValidity("Sicilinizi giriniz")} style={{ flex: "1", minWidth: "70px" }} className="pe-2" id="outlined-basic" name="ownerId" required label="Sicil *" variant="outlined" size="small" value={surveyPreferences.ownerId}
+                                                onChange={(event) => {
+                                                    event.target.setCustomValidity(event.target.value.trim().length === 0 ? "Sicilinizi giriniz" : "")
+                                                    handleSurveyPreferences(event)
+                                                }} />
+
+
+                                        </form>
+                                        <Button type="submit" form="create-survey-form" className="rounded-pill" variant="contained" style={{ height: "2.7rem", flex: "0.7", textTransform: "none" }}>
+                                            Anketi Bitir
+                                        </Button>
+                                    </div>
+                                </div>
+
+
+
+
+
+                            </div>
 
 
 
                         </div>
 
-
-
-                    </div>
-
-                </CardContent>
-            </Card>
+                    </CardContent>
+                </Card>
+            </div>
         </div>
     </Grow >
 

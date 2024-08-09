@@ -235,7 +235,7 @@ function SurveyResults(props) {
                     :
 
                     <PieChart
-                        margin={{ right: 200 }}
+                        margin={{ left: 100 }}
                         series={[
                             {
                                 data: pieData,

@@ -118,9 +118,7 @@ function Question(props) {
     IconContainer.propTypes = {
         value: PropTypes.number.isRequired,
     };
-    function getLabelText(value) {
-        return `${value} Star${value !== 1 ? 's' : ''}, ${labels[value]}`;
-    }
+    
     const StyledRating = styled(Rating)(({ theme }) => ({
         '& .MuiRating-iconEmpty .MuiSvgIcon-root': {
             color: theme.palette.action.disabled,

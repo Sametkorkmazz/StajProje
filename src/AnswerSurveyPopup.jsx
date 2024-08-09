@@ -110,7 +110,7 @@ function AnswerSurveyPopup(props) {
                 var tempArray = []
                 question.options.forEach((option, index) => {
 
-                    tempArray.push({ answeredAmount: option.answers.length, barName: option.name.split(" ")[1] !== "Yüz" ? option.name :  faceValues[index + 1]})
+                    tempArray.push({ answeredAmount: option.answers.length, barName: option.name.split(" ")[1] !== "Yüz" ? option.name : faceValues[index + 1] })
                     // tempObject[option.name] = option.answers.length
 
 
@@ -200,7 +200,7 @@ function AnswerSurveyPopup(props) {
 
 
     }
-
+    const [za, set_za] = useState("");
 
     return <Grow in={true} >
 
@@ -281,10 +281,11 @@ function AnswerSurveyPopup(props) {
                                 var remaningDays = calculateRemainingDays(survey.expireDate)
                                 return <div key={index} className='d-flex mb-3 flex-column rounded'>
                                     <Button onClick={() => handleFocus(index)} variant='outlined' style={{
-                                        textTransform: "none", flex: "1"
+                                        textTransform: "none", flex: "1",
+                                       
                                     }}
-                                        color={remaningDays < 0 ? "primary" : "secondary"}
-
+                                        color= {remaningDays > 0 ? "primary" : "secondary"
+}
                                         disableElevation className='align-items-start gap-1  d-flex flex-column' >
                                         <Typography style={{ fontWeight: "200" }} className="col-12 text-end" variant="h6" gutterBottom>
                                             {remaningDays > 0 ? `Anketin bitmesine son ${remaningDays + 1} gün` : "Anket bitmiştir"}
