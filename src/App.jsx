@@ -1,64 +1,61 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import Button from '@mui/material/Button';
-import PollIcon from '@mui/icons-material/Poll';
-import Zoom from '@mui/material/Zoom';
-import Collapse from '@mui/material/Collapse';
-import Grow from '@mui/material/Grow';
-import SurveyButton from './SurveyButton';
-import SurveyPopup from './SurveyPopup';
-import SurveyMenu from './SurveyMenu';
-import { themeOptions } from './theme';
-import { ThemeProvider } from '@mui/material/styles';
-import AnswerSurveyPopup from './AnswerSurveyPopup';
-import { TextField } from '@mui/material';
-import Snackbar from '@mui/material/Snackbar';
-import Alert from '@mui/material/Alert';
+import { useState } from "react";
+import SurveyButton from "./SurveyButton";
+import SurveyPopup from "./SurveyPopup";
+import SurveyMenu from "./SurveyMenu";
+import { themeOptions } from "./theme";
+import { ThemeProvider } from "@mui/material/styles";
+import AnswerSurveyPopup from "./AnswerSurveyPopup";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
+import SurveyDetailsPieChart from "./SurveyDetailsPieChart.jsx";
+
 let surveyController = new AbortController();
 
 function App() {
   const [surveyHover, setSurveyHover] = useState(false);
   const [buttonClicked, setButton] = useState(false);
   const [openSurveyCreation, set_OpenSurveyCreation] = useState(false);
-  const [surveyArray, setSurveyArray] = useState([])
-  const [openSurveyAnswer, set_OpenSurveyAnswer] = useState(false)
-  const [feedbackOpen, set_feedbackOpen] = useState({ open: false, message: "", severity: "", color: "" })
+  const [surveyArray, setSurveyArray] = useState([]);
+  const [openSurveyAnswer, set_OpenSurveyAnswer] = useState(false);
+  const [feedbackOpen, set_feedbackOpen] = useState({
+    open: false,
+    message: "",
+    severity: "",
+    color: "",
+  });
 
   const feedBack = (feedbackValues) => {
     const { message, severity, color } = feedbackValues;
-    return <Snackbar
-      open={true}
-      autoHideDuration={2000}
-      anchorOrigin={{ vertical: "top", horizontal: "center" }}
-
-      onClose={(event, reason) => {
-        if (reason === 'clickaway') {
-          return;
-        }
-        set_feedbackOpen((prev) => ({ ...prev, open: false }))
-      }
-      }
-      key={"top" + "center"}
-    >
-      <Alert
-        color={color}
+    return (
+      <Snackbar
+        open={true}
+        autoHideDuration={2000}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
         onClose={(event, reason) => {
-          if (reason === 'clickaway') {
+          if (reason === "clickaway") {
             return;
           }
-          set_feedbackOpen((prev) => ({ ...prev, open: false }))
-
-        }
-        }
-        severity={severity}
-        variant="filled"
-        sx={{ width: '100%' }}
+          set_feedbackOpen((prev) => ({ ...prev, open: false }));
+        }}
+        key={"top" + "center"}
       >
-        {message}
-      </Alert>
-    </Snackbar>
-  }
+        <Alert
+          color={color}
+          onClose={(event, reason) => {
+            if (reason === "clickaway") {
+              return;
+            }
+            set_feedbackOpen((prev) => ({ ...prev, open: false }));
+          }}
+          severity={severity}
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          {message}
+        </Alert>
+      </Snackbar>
+    );
+  };
 
   async function postSurvey(survey) {
     surveyController.abort();
@@ -73,24 +70,30 @@ function App() {
       creationTime: new Date().toISOString().split("T")[0],
       deadline: survey.expireDate,
       questionDTOList: [
-        survey.questions.map(question => ({
+        survey.questions.map((question) => ({
           questionText: question.questionName,
-          questionType: question.type === "seçenek" ? "MULTIPLECHOICE" : question.type === "metin" ? "OPENENDED" : "RATING",
+          questionType:
+            question.type === "seçenek"
+              ? "MULTIPLECHOICE"
+              : question.type === "metin"
+                ? "OPENENDED"
+                : "RATING",
           ratingMaxValue: question.options.length,
           choices: [
-            question.options.map(option => ({ choiceText: option.name }))
-          ]
-
-        }))
-      ]
-
-    }
+            question.options.map((option) => ({ choiceText: option.name })),
+          ],
+        })),
+      ],
+    };
     console.log(formattedSurvey);
 
-    set_feedbackOpen({ open: true, message: "Anket oluşturuldu.", severity: "success", color: "primary" })
-
+    set_feedbackOpen({
+      open: true,
+      message: "Anket oluşturuldu.",
+      severity: "success",
+      color: "primary",
+    });
   }
-
 
   function handleOver() {
     setSurveyHover(true);
@@ -100,52 +103,68 @@ function App() {
     if (!buttonClicked) {
       setSurveyHover(false);
     }
-
   }
+
   function addSurvey(survey) {
-
-    setSurveyArray(prev => [...prev, survey])
+    setSurveyArray((prev) => [...prev, survey]);
   }
+
   function updateSurvey(survey, index) {
-    var temp = surveyArray.map(survey => survey)
+    var temp = surveyArray.map((survey) => survey);
     temp[index] = survey;
-    setSurveyArray([...temp])
+    setSurveyArray([...temp]);
     console.log(surveyArray);
-
   }
 
-
-
-  return <ThemeProvider theme={themeOptions}>
-    <div className="" >
-      {feedbackOpen.open && feedBack(feedbackOpen)}
-      {openSurveyCreation ?
-        <SurveyPopup postSurvey={postSurvey} addSurvey={addSurvey} setOpenSurveyCreation={set_OpenSurveyCreation} /> : (openSurveyAnswer) && <AnswerSurveyPopup updateSurvey={updateSurvey} survey={surveyArray} setAnswerSurvey={set_OpenSurveyAnswer}></AnswerSurveyPopup>
-      }
-      <div style={{
-        opacity: (openSurveyCreation || openSurveyAnswer) ? "20%" : "100%",
-        pointerEvents: (openSurveyCreation || openSurveyAnswer) ? "none" : "auto",
-      }} className='d-flex flex-column' >
-
-
-        <div className="d-flex justify-content-end pe-5">
-
-          <SurveyButton handleOut={handleOut} handleOver={handleOver} setButton={setButton} surveyHover={surveyHover}></SurveyButton>
-
-        </div>
-
-
-        {buttonClicked &&
-          <div className="d-flex justify-content-end">
-            <SurveyMenu set_OpenSurveyAnswer={set_OpenSurveyAnswer} set_OpenSurveyCreation={set_OpenSurveyCreation}></SurveyMenu>
+  return (
+    <ThemeProvider theme={themeOptions}>
+      <div className="">
+        {feedbackOpen.open && feedBack(feedbackOpen)}
+        {openSurveyCreation ? (
+          <SurveyPopup
+            postSurvey={postSurvey}
+            addSurvey={addSurvey}
+            setOpenSurveyCreation={set_OpenSurveyCreation}
+          />
+        ) : (
+          openSurveyAnswer && (
+            <AnswerSurveyPopup
+              updateSurvey={updateSurvey}
+              survey={surveyArray}
+              setAnswerSurvey={set_OpenSurveyAnswer}
+            ></AnswerSurveyPopup>
+          )
+        )}
+        <div
+          style={{
+            opacity: openSurveyCreation || openSurveyAnswer ? "20%" : "100%",
+            pointerEvents:
+              openSurveyCreation || openSurveyAnswer ? "none" : "auto",
+          }}
+          className="d-flex flex-column"
+        >
+          <div className="d-flex justify-content-end pe-5">
+            <SurveyButton
+              handleOut={handleOut}
+              handleOver={handleOver}
+              setButton={setButton}
+              surveyHover={surveyHover}
+            ></SurveyButton>
           </div>
 
-        }
+          {buttonClicked && (
+            <div className="d-flex justify-content-end">
+              <SurveyMenu
+                set_OpenSurveyAnswer={set_OpenSurveyAnswer}
+                set_OpenSurveyCreation={set_OpenSurveyCreation}
+              ></SurveyMenu>
+            </div>
+          )}
+        </div>
+        <SurveyDetailsPieChart></SurveyDetailsPieChart>
       </div>
-
-    </div>
-  </ThemeProvider>
-
+    </ThemeProvider>
+  );
 }
 
-export default App
+export default App;
